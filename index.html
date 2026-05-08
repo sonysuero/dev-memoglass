@@ -24318,5 +24318,191 @@ select:disabled{
 })();
 </script>
 
+
+<style>
+.memo-super-delete-user-btn{background:#dc2626!important;color:#fff!important;border:none!important;border-radius:10px!important;padding:9px 11px!important;font-weight:900!important;cursor:pointer!important;display:inline-flex!important;visibility:visible!important;opacity:1!important}
+</style>
+<script>
+/* SUPER ADMIN: ELIMINA DEFINITIVAMENTE UTENTI */
+(function(){
+  function currentUser(){if(window.__memoGlassFirebaseLocalUser)return window.__memoGlassFirebaseLocalUser;if(typeof getCurrentUser==="function"){try{return getCurrentUser()}catch(e){}}return null}
+  function ensureFirebase(){const cfg=window.MEMOGLASS_FIREBASE_CONFIG||{apiKey:"AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",authDomain:"memoglass-83f62.firebaseapp.com",projectId:"memoglass-83f62",storageBucket:"memoglass-83f62.firebasestorage.app",messagingSenderId:"776874023547",appId:"1:776874023547:web:0436e0b26cf1221578a0de",measurementId:"G-J628CF7XBE"};if(!window.firebase)return false;if(!firebase.apps.length)firebase.initializeApp(cfg);return true}
+  function db(){if(!ensureFirebase())throw new Error("Firebase non caricato");return firebase.firestore()}
+  function auth(){if(!ensureFirebase())throw new Error("Firebase non caricato");return firebase.auth()}
+  function isSuperAdmin(){const u=currentUser();return !!(u&&u.role==="superadmin")}
+  function myUid(){const u=currentUser();if(u&&(u.uid||u.id))return u.uid||u.id;if(window.firebase&&firebase.auth&&firebase.auth().currentUser)return firebase.auth().currentUser.uid;return""}
+  async function reauth(password){const au=auth().currentUser,u=currentUser(),email=au?.email||u?.email||"";if(au&&email){const cred=firebase.auth.EmailAuthProvider.credential(email,password);await au.reauthenticateWithCredential(cred)}}
+  window.superAdminDeleteUserDefinitive=async function(targetUid,email){
+    if(!isSuperAdmin())return alert("Solo il Super Admin può eliminare definitivamente gli utenti.");
+    if(!targetUid)return alert("Utente non valido.");
+    if(targetUid===myUid())return alert("Non puoi eliminare il tuo account Super Admin da qui.");
+    if(!confirm("ATTENZIONE\n\nStai per eliminare definitivamente questo utente:\n"+(email||targetUid)+"\n\nVerranno eliminati profilo MemoGlass e dati collegati.\nL'operazione non è reversibile.\n\nVuoi continuare?"))return;
+    if(prompt("Per confermare scrivi: ELIMINA")!=="ELIMINA")return alert("Eliminazione annullata.");
+    const password=prompt("Inserisci la password del Super Admin:"); if(!password)return alert("Password obbligatoria.");
+    try{
+      await reauth(password);
+      await db().collection("users").doc(targetUid).delete();
+      try{await db().collection("memoGlassUserData").doc(targetUid).delete()}catch(e){}
+      try{await db().collection("companies").doc(targetUid).delete()}catch(e){}
+      try{const snap=await db().collection("users").where("companyId","==",targetUid).get();const batch=db().batch();snap.docs.forEach(d=>{if(d.id!==targetUid)batch.delete(d.ref)});await batch.commit()}catch(e){}
+      alert("Utente eliminato dal database MemoGlass.\n\nNota: per eliminarlo anche da Firebase Authentication serve una Cloud Function Admin o rimozione manuale dalla console Firebase.");
+      if(typeof renderFirebaseRealUsers==="function")try{await renderFirebaseRealUsers()}catch(e){}
+      if(typeof renderPlatformPlansDashboard==="function")try{await renderPlatformPlansDashboard()}catch(e){}
+      if(typeof renderCompanyPanel==="function")try{await renderCompanyPanel()}catch(e){}
+    }catch(e){
+      console.error(e);
+      alert((String(e.code||"").includes("wrong-password")||String(e.message||"").toLowerCase().includes("password"))?"Password Super Admin non corretta.":"Errore eliminazione utente: "+(e.message||e));
+    }
+  };
+  function addDeleteButtons(){
+    if(!isSuperAdmin())return;
+    ["#platformPlansList","#firebaseRealUsersList","#companyUsersList",".firebase-users-list",".platform-users-list"].forEach(sel=>{
+      document.querySelectorAll(sel).forEach(container=>{
+        container.querySelectorAll(".company-user-row,.user-row,.firebase-user-row,.memo-team-row").forEach(row=>{
+          if(row.querySelector(".memo-super-delete-user-btn"))return;
+          const text=row.textContent||""; let email="",uid="";
+          const em=text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i); if(em)email=em[0];
+          row.querySelectorAll("button,select,a").forEach(n=>{const vals=Array.from((n.getAttribute("onclick")||"").matchAll(/'([^']+)'/g)).map(m=>m[1]);vals.forEach(v=>{if(v.includes("@"))email=v;else if(v.length>8&&!uid)uid=v})});
+          uid=uid||row.getAttribute("data-uid")||row.getAttribute("data-user-id")||row.getAttribute("data-team-uid")||"";
+          if(!uid)return;
+          const actions=row.querySelector(".company-actions")||row.querySelector(".memo-team-actions")||row.querySelector(".actions")||row;
+          const btn=document.createElement("button");btn.className="memo-super-delete-user-btn";btn.textContent="Elimina definitivamente";
+          btn.onclick=function(e){e.preventDefault();e.stopPropagation();superAdminDeleteUserDefinitive(uid,email);return false};
+          actions.appendChild(btn);
+        });
+      });
+    });
+  }
+  ["renderFirebaseRealUsers","renderPlatformPlansDashboard","renderCompanyUsers","renderCompanyPanel"].forEach(fn=>{const old=window[fn];if(typeof old==="function"&&!old.__superDeleteWrapped){window[fn]=async function(){const r=await old.apply(this,arguments);setTimeout(addDeleteButtons,300);setTimeout(addDeleteButtons,900);return r};window[fn].__superDeleteWrapped=true}});
+  document.addEventListener("DOMContentLoaded",()=>{setTimeout(addDeleteButtons,800);setTimeout(addDeleteButtons,2000)});
+  setInterval(addDeleteButtons,3000);
+})();
+</script>
+
+
+<style>
+.memo-backup-code-btn{
+    background:#007aff!important;
+    color:#fff!important;
+    border:none!important;
+    border-radius:12px!important;
+    padding:12px 14px!important;
+    font-weight:900!important;
+    cursor:pointer!important;
+    display:inline-flex!important;
+    visibility:visible!important;
+    opacity:1!important;
+    margin-top:10px!important;
+}
+.memo-backup-code-box{
+    background:#eff6ff!important;
+    border:1px solid #bfdbfe!important;
+    border-radius:16px!important;
+    padding:14px!important;
+    margin-top:14px!important;
+}
+</style>
+
+<script>
+/* SUPER ADMIN: BACK UP GESTIONALE MEMO GLASS */
+(function(){
+
+  function currentUser(){
+    if(window.__memoGlassFirebaseLocalUser) return window.__memoGlassFirebaseLocalUser;
+    if(typeof getCurrentUser==="function"){
+      try{return getCurrentUser()}catch(e){}
+    }
+    return null;
+  }
+
+  function isSuperAdmin(){
+    const u=currentUser();
+    return !!(u && u.role==="superadmin");
+  }
+
+  window.downloadBackupGestionaleMemoGlass = function(){
+    if(!isSuperAdmin()){
+      alert("Solo il Super Admin può scaricare il backup del gestionale.");
+      return;
+    }
+
+    const htmlCode = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    const blob = new Blob([htmlCode], {type:"text/html;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+
+    const d = new Date();
+    const stamp =
+      d.getFullYear() + "-" +
+      String(d.getMonth()+1).padStart(2,"0") + "-" +
+      String(d.getDate()).padStart(2,"0") + "_" +
+      String(d.getHours()).padStart(2,"0") + "-" +
+      String(d.getMinutes()).padStart(2,"0");
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Back-up-gestionale-Memo-Glass-" + stamp + ".html";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
+
+  function addBackupButton(){
+    if(!isSuperAdmin()) return;
+
+    const containers = [
+      document.querySelector("#memoSettingsContainer"),
+      document.querySelector("#settingsOverlay .settings-body"),
+      document.querySelector(".settings-body"),
+      document.querySelector("#memoSettingsPage .memo-settings-card"),
+      document.querySelector("#platformPlansList"),
+      document.querySelector("#firebaseRealUsersList")
+    ].filter(Boolean);
+
+    containers.forEach(container=>{
+      if(container.querySelector("#memoBackupGestionaleBox")) return;
+
+      const box = document.createElement("div");
+      box.id = "memoBackupGestionaleBox";
+      box.className = "memo-backup-code-box settings-section";
+      box.innerHTML = `
+        <h4>Back up gestionale Memo Glass</h4>
+        <small class="settings-help">
+          Scarica una copia completa del codice HTML attuale del gestionale.
+        </small><br>
+        <button type="button" class="memo-backup-code-btn" onclick="downloadBackupGestionaleMemoGlass()">
+          Back up gestionale Memo Glass
+        </button>
+      `;
+
+      container.appendChild(box);
+    });
+  }
+
+  ["openMemoSettingsPage","openSettings","renderFirebaseRealUsers","renderPlatformPlansDashboard","renderCompanyPanel"].forEach(fn=>{
+    const old = window[fn];
+    if(typeof old==="function" && !old.__memoBackupWrapped){
+      const wrapped = async function(){
+        const r = await old.apply(this, arguments);
+        setTimeout(addBackupButton,300);
+        setTimeout(addBackupButton,900);
+        return r;
+      };
+      wrapped.__memoBackupWrapped = true;
+      window[fn] = wrapped;
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded",function(){
+    setTimeout(addBackupButton,800);
+    setTimeout(addBackupButton,2000);
+  });
+
+  setInterval(addBackupButton,3000);
+
+})();
+</script>
+
 </body>
 </html>
