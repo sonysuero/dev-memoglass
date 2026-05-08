@@ -24204,5 +24204,119 @@ select:disabled{
 })();
 </script>
 
+
+<style>
+.memo-danger-account-box{margin-top:16px!important;background:#fff1f2!important;border:1px solid #fecdd3!important;color:#9f1239!important;border-radius:16px!important;padding:14px!important;font-weight:800!important}
+.memo-danger-account-box button,.memo-delete-team-btn{background:#dc2626!important;color:#fff!important;border:none!important;border-radius:12px!important;padding:11px 13px!important;font-weight:900!important;cursor:pointer!important;display:inline-flex!important;visibility:visible!important;opacity:1!important}
+</style>
+<script>
+/* FIX FINALE: USA CLIENTE COMPILATO + ELIMINA ACCOUNT + ELIMINA TEAM */
+(function(){
+  function el(id){return document.getElementById(id)}
+  function currentUser(){if(window.__memoGlassFirebaseLocalUser)return window.__memoGlassFirebaseLocalUser;if(typeof getCurrentUser==="function"){try{return getCurrentUser()}catch(e){}}return null}
+  function ensureFirebase(){const cfg=window.MEMOGLASS_FIREBASE_CONFIG||{apiKey:"AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",authDomain:"memoglass-83f62.firebaseapp.com",projectId:"memoglass-83f62",storageBucket:"memoglass-83f62.firebasestorage.app",messagingSenderId:"776874023547",appId:"1:776874023547:web:0436e0b26cf1221578a0de",measurementId:"G-J628CF7XBE"};if(!window.firebase)return false;if(!firebase.apps.length)firebase.initializeApp(cfg);return true}
+  function db(){if(!ensureFirebase())throw new Error("Firebase non caricato");return firebase.firestore()}
+  function auth(){if(!ensureFirebase())throw new Error("Firebase non caricato");return firebase.auth()}
+  function uid(){const u=currentUser();if(u&&(u.uid||u.id))return u.uid||u.id;if(window.firebase&&firebase.auth&&firebase.auth().currentUser)return firebase.auth().currentUser.uid;return ""}
+  function isCompanyOwner(){const u=currentUser();return !!(u&&(u.role==="superadmin"||u.companyRole==="owner"||u.accountRole==="owner"||u.isOwner===true))}
+
+  function customerFrom(node){
+    let c=window.currentCustomer||window.selectedCustomer||window.currentCustomerDetail||null;
+    if(c&&(c.nome||c.name||c.email||c.telefono||c.phone))return c;
+    const area=node?.closest?.("#customerDetailPage,.customer-detail-page,.customer-detail,.customer-card,.customer-row,.client-card,.client-row")||document.querySelector("#customerDetailPage")||document;
+    const text=area.textContent||"";
+    const name=area.querySelector?.("[data-customer-name]")?.textContent?.trim()||area.querySelector?.(".customer-name")?.textContent?.trim()||area.querySelector?.(".client-name")?.textContent?.trim()||area.querySelector?.("h2")?.textContent?.trim()||area.querySelector?.("h3")?.textContent?.trim()||"";
+    const phone=text.match(/(\+?\d[\d\s]{7,})/);
+    const email=text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+    c={id:area.getAttribute?.("data-customer-id")||area.dataset?.customerId||"",nome:name,name:name,telefono:phone?phone[1].trim():"",phone:phone?phone[1].trim():"",email:email?email[0]:""};
+    try{const cached=JSON.parse(localStorage.getItem("memoGlassLastViewedCustomer")||"null");if((!c.nome&&!c.telefono&&!c.email)&&cached)c=cached}catch(e){}
+    return c;
+  }
+  function setVal(input,val){if(!input||!val)return;input.value=val;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}))}
+  function fillAppointment(c){
+    if(!c)return;
+    const nome=c.nome||c.name||c.ragioneSociale||"", tel=c.telefono||c.phone||c.cellulare||c.cell||"", email=c.email||"";
+    const map={customerName:nome,appointmentCustomer:nome,nomeCliente:nome,clientName:nome,cliente:nome,nome:nome,customerPhone:tel,telefono:tel,clientPhone:tel,telefonoCliente:tel,cell:tel,cellulare:tel,customerEmail:email,email:email,clientEmail:email};
+    Object.keys(map).forEach(id=>setVal(el(id),map[id]));
+    document.querySelectorAll("input,textarea,select").forEach(input=>{
+      const hay=[input.id||"",input.name||"",input.placeholder||"",input.closest(".form-group")?.querySelector("label")?.textContent||"",input.closest("label")?.textContent||""].join(" ").toLowerCase();
+      if(nome&&(hay.includes("cliente")||hay.includes("nome cliente")||hay.includes("nominativo")))setVal(input,nome);
+      if(tel&&(hay.includes("telefono")||hay.includes("cell")||hay.includes("phone")))setVal(input,tel);
+      if(email&&hay.includes("email"))setVal(input,email);
+    });
+    window.currentCustomer=c;window.selectedCustomer=c;window.appointmentCustomer=c;
+    try{localStorage.setItem("memoGlassLastViewedCustomer",JSON.stringify(c));localStorage.setItem("memoGlassAppointmentCustomer",JSON.stringify(c))}catch(e){}
+  }
+  window.useCustomerForNewAppointment=function(c){
+    c=c||customerFrom(document.activeElement);
+    if(!c||!(c.nome||c.name||c.email||c.telefono||c.phone)){alert("Cliente non trovato.");return}
+    fillAppointment(c);
+    try{if(typeof backToMemoCalendar==="function")backToMemoCalendar()}catch(e){}
+    ["customersPage","customerDetailPage","memoSettingsPage"].forEach(id=>{const n=el(id);if(n)n.style.display="none"});
+    document.querySelectorAll(".memo-page-section").forEach(p=>p.style.display="none");
+    document.querySelectorAll(".calendar-card,.calendar-section,.stats-card,.dashboard-card").forEach(b=>b.style.display="");
+    let opened=false;
+    for(const fn of ["openNewAppointment","newAppointment","openAppointmentModal","showAppointmentModal","openModal","openAppointmentForm","openAppointmentEditor"]){if(typeof window[fn]==="function"){try{window[fn]();opened=true;break}catch(e){}}}
+    if(!opened){const btn=Array.from(document.querySelectorAll("button,a")).find(b=>{const t=(b.textContent||"").toLowerCase();return t.includes("nuovo appuntamento")||t.includes("+ nuovo")||t.trim()==="+ nuovo"});if(btn)btn.click()}
+    [80,250,600,1200,2000].forEach(ms=>setTimeout(()=>fillAppointment(c),ms));
+  };
+  function patchUse(){
+    document.querySelectorAll("button,a").forEach(btn=>{
+      const t=(btn.textContent||"").trim().toLowerCase();
+      if(t==="usa"||t.includes("usa cliente")||t.includes("usa anagrafica")){
+        if(btn.__memoUseFinalBound)return;btn.__memoUseFinalBound=true;btn.removeAttribute("onclick");
+        btn.onclick=function(e){e.preventDefault();e.stopPropagation();useCustomerForNewAppointment(customerFrom(btn));return false}
+      }
+    });
+  }
+
+  async function reauth(password){
+    const au=auth().currentUser, u=currentUser(), email=au?.email||u?.email||"";
+    if(au&&email){const cred=firebase.auth.EmailAuthProvider.credential(email,password);await au.reauthenticateWithCredential(cred)}
+    return au;
+  }
+  window.deleteMyMemoGlassAccount=async function(){
+    const u=currentUser();if(!u)return alert("Devi essere loggato.");
+    if(!confirm("ATTENZIONE\n\nStai per eliminare definitivamente il tuo account MemoGlass.\nL'operazione non è reversibile.\n\nVuoi continuare?"))return;
+    if(prompt("Per confermare scrivi: ELIMINA IL MIO ACCOUNT")!=="ELIMINA IL MIO ACCOUNT")return alert("Eliminazione annullata.");
+    const password=prompt("Inserisci la tua password:");if(!password)return alert("Password obbligatoria.");
+    try{const au=await reauth(password);try{await db().collection("users").doc(uid()).delete()}catch(e){}try{await db().collection("memoGlassUserData").doc(uid()).delete()}catch(e){};for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&/memo|calendar|appointment|customer|glass/i.test(k))localStorage.removeItem(k)}try{sessionStorage.clear()}catch(e){}if(au)await au.delete();alert("Account eliminato definitivamente.");location.reload()}catch(e){alert(String(e.code||"").includes("wrong-password")||String(e.message||"").toLowerCase().includes("password")?"Password non corretta.":"Errore eliminazione account: "+(e.message||e))}
+  };
+  function addDeleteAccount(){
+    [document.querySelector("#memoSettingsContainer"),document.querySelector("#settingsOverlay .settings-body"),document.querySelector(".settings-body"),document.querySelector("#memoSettingsPage .memo-settings-card")].filter(Boolean).forEach(container=>{
+      if(container.querySelector("#memoDeleteMyAccountBox"))return;
+      const box=document.createElement("div");box.id="memoDeleteMyAccountBox";box.className="memo-danger-account-box settings-section";
+      box.innerHTML='<h4>Elimina il mio account</h4><p>Operazione non reversibile: cancellerà il tuo account MemoGlass e i dati collegati al tuo profilo.</p><button type="button" onclick="deleteMyMemoGlassAccount()">Elimina il mio account</button>';
+      container.appendChild(box);
+    });
+  }
+
+  window.deleteCompanyTeamMember=async function(memberUid,email){
+    if(!isCompanyOwner())return alert("Solo il titolare dell'azienda può eliminare membri della squadra.");
+    if(!memberUid)return alert("Utente non valido."); if(memberUid===uid())return alert("Non puoi eliminare il tuo account da La mia squadra.");
+    if(!confirm("Sei sicuro di voler eliminare questo membro della squadra?\n\n"+(email||memberUid)+"\n\nOperazione non reversibile."))return;
+    if(prompt("Per confermare scrivi: ELIMINA")!=="ELIMINA")return alert("Eliminazione annullata.");
+    const password=prompt("Inserisci la password del titolare:");if(!password)return alert("Password obbligatoria.");
+    try{await reauth(password);await db().collection("users").doc(memberUid).delete();try{await db().collection("memoGlassUserData").doc(memberUid).delete()}catch(e){}alert("Membro squadra eliminato.");if(typeof renderMemoTeamList==="function")await renderMemoTeamList()}catch(e){alert(String(e.code||"").includes("wrong-password")||String(e.message||"").toLowerCase().includes("password")?"Password non corretta.":"Errore eliminazione membro: "+(e.message||e))}
+  };
+  function addDeleteTeam(){
+    if(!isCompanyOwner())return; const list=el("memoTeamList"); if(!list)return;
+    list.querySelectorAll(".memo-team-row").forEach(row=>{
+      const txt=row.textContent||""; if(txt.toLowerCase().includes("titolare"))return;
+      let memberUid=row.getAttribute("data-team-uid")||"", email=row.getAttribute("data-team-email")||"";
+      const em=txt.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i); if(em)email=em[0];
+      row.querySelectorAll("button").forEach(btn=>{const vals=Array.from((btn.getAttribute("onclick")||"").matchAll(/'([^']+)'/g)).map(m=>m[1]);vals.forEach(v=>{if(v.includes("@"))email=v;else if(v.length>8&&!memberUid)memberUid=v})});
+      if(!memberUid)return; row.setAttribute("data-team-uid",memberUid); row.setAttribute("data-team-email",email);
+      let btn=row.querySelector(".memo-delete-team-btn"); if(!btn){btn=document.createElement("button");btn.className="memo-delete-team-btn";btn.textContent="Elimina membro";(row.querySelector(".memo-team-actions")||row).appendChild(btn)}
+      btn.onclick=function(e){e.preventDefault();e.stopPropagation();deleteCompanyTeamMember(memberUid,email);return false}
+    });
+  }
+  const oldRender=window.renderMemoTeamList;if(typeof oldRender==="function"&&!oldRender.__deleteTeamFinal){window.renderMemoTeamList=async function(){const r=await oldRender.apply(this,arguments);setTimeout(addDeleteTeam,100);setTimeout(addDeleteTeam,600);return r};window.renderMemoTeamList.__deleteTeamFinal=true}
+  function boot(){patchUse();addDeleteAccount();addDeleteTeam();try{const c=JSON.parse(localStorage.getItem("memoGlassAppointmentCustomer")||"null");if(c)fillAppointment(c)}catch(e){}}
+  document.addEventListener("DOMContentLoaded",()=>{setTimeout(boot,500);setTimeout(boot,1500);setTimeout(boot,3000)});
+  setInterval(boot,2500);
+})();
+</script>
+
 </body>
 </html>
