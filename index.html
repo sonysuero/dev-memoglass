@@ -3284,11 +3284,6 @@ body {
 </style>
 
 <!-- Firebase Gate Memo Glass -->
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-
-
 <style>
 #firebaseGateOverlay {
     position: fixed;
@@ -3420,6 +3415,39 @@ body {
     }
 }
 </style>
+
+
+<!-- FIREBASE SDK COMPAT - NECESSARIO PER MEMOGLASS -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
+<script>
+window.MEMOGLASS_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",
+  authDomain: "memoglass-83f62.firebaseapp.com",
+  projectId: "memoglass-83f62",
+  storageBucket: "memoglass-83f62.firebasestorage.app",
+  messagingSenderId: "776874023547",
+  appId: "1:776874023547:web:0436e0b26cf1221578a0de",
+  measurementId: "G-J628CF7XBE"
+};
+
+(function(){
+  function initMemoGlassFirebase(){
+    if(!window.firebase) return false;
+    if(!firebase.apps.length){
+      firebase.initializeApp(window.MEMOGLASS_FIREBASE_CONFIG);
+    }
+    window.memoGlassFirebaseReady = true;
+    return true;
+  }
+  window.initMemoGlassFirebase = initMemoGlassFirebase;
+  document.addEventListener("DOMContentLoaded", initMemoGlassFirebase);
+  setTimeout(initMemoGlassFirebase, 100);
+  setTimeout(initMemoGlassFirebase, 500);
+})();
+</script>
 
 </head>
 
@@ -24149,6 +24177,30 @@ select:disabled{
         getView,
         getTimeline
     };
+})();
+</script>
+
+
+<script>
+/* FIX FIREBASE NON CARICATO */
+(function(){
+  const originalAlert = window.alert;
+  window.alert = function(msg){
+    if(String(msg || "").toLowerCase().includes("firebase non caricato")){
+      if(window.initMemoGlassFirebase && window.initMemoGlassFirebase()){
+        return;
+      }
+    }
+    return originalAlert.apply(this, arguments);
+  };
+
+  function keepFirebaseReady(){
+    if(window.initMemoGlassFirebase) window.initMemoGlassFirebase();
+  }
+
+  document.addEventListener("click", keepFirebaseReady, true);
+  document.addEventListener("DOMContentLoaded", keepFirebaseReady);
+  setInterval(keepFirebaseReady, 1500);
 })();
 </script>
 
