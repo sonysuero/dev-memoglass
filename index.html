@@ -1974,12 +1974,294 @@ body {
     font-weight: 900;
 }
 
+
+/* MEMO GLASS AUTH SAFE LAYER */
+.memo-users-modal {
+    width: 980px;
+    max-width: 96vw;
+    max-height: 92vh;
+    overflow-y: auto;
+    background: white;
+    border-radius: 22px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.38);
+}
+.memo-users-body { padding: 18px; }
+.memo-users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+}
+.memo-users-table th,
+.memo-users-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eef2f7;
+    text-align: left;
+    vertical-align: top;
+}
+.memo-users-table th {
+    background: #f8fafc;
+    font-weight: 900;
+}
+.memo-users-table select {
+    width: 100%;
+    border: 1px solid #d7dee8;
+    border-radius: 10px;
+    padding: 8px;
+}
+.memo-permission-list {
+    display: grid;
+    gap: 6px;
+}
+.memo-permission-list label {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-weight: 800;
+    font-size: 0.76rem;
+}
+@media(max-width:700px){
+    .memo-users-modal {
+        width:100vw;
+        max-width:100vw;
+        height:100vh;
+        max-height:100vh;
+        border-radius:0;
+    }
+}
+
+
+
+
+
+/* MEMO GLASS CLIENTI PANEL START */
+#memoClientsPage {
+    display: none;
+    max-width: 1200px;
+    margin: 16px auto;
+    padding: 0 24px 24px;
+}
+.memo-page-head {
+    background: linear-gradient(135deg, #007aff, #004999);
+    color: white;
+    border-radius: 22px;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    box-shadow: 0 10px 30px rgba(0,122,255,.22);
+}
+.memo-page-head h2 {
+    margin: 0;
+    font-size: 1.35rem;
+}
+.memo-page-head p {
+    margin: 5px 0 0;
+    opacity: .92;
+    font-weight: 700;
+}
+.memo-page-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.memo-page-card {
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    padding: 18px;
+    margin-top: 16px;
+}
+.memo-clients-toolbar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.memo-clients-toolbar input {
+    width: 100%;
+    border: 1px solid #d7dee8;
+    border-radius: 12px;
+    padding: 13px;
+    font-size: 0.95rem;
+}
+.memo-client-list-page {
+    display: grid;
+    gap: 10px;
+}
+.memo-client-row {
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #007aff;
+    border-radius: 15px;
+    padding: 13px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+}
+.memo-client-row strong {
+    color: #1e293b;
+    font-size: 1rem;
+}
+.memo-client-row small {
+    display: block;
+    color: #64748b;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+.memo-client-row-actions {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+.memo-client-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.memo-client-form-grid .full {
+    grid-column: 1 / -1;
+}
+.memo-client-form-grid label {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 900;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+.memo-client-form-grid input,
+.memo-client-form-grid select,
+.memo-client-form-grid textarea {
+    width: 100%;
+    border: 1px solid #d7dee8;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+.memo-client-form-grid textarea {
+    min-height: 78px;
+    resize: vertical;
+}
+.memo-company-data-box {
+    display: none;
+    grid-column: 1 / -1;
+    background: #f8fafc;
+    border: 1px dashed #94a3b8;
+    border-radius: 15px;
+    padding: 14px;
+}
+.memo-address-search-wrap {
+    position: relative;
+}
+.memo-address-actions {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+}
+.memo-address-suggestions {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 20;
+    background: white;
+    border: 1px solid #d7dee8;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.14);
+    max-height: 230px;
+    overflow-y: auto;
+}
+.memo-address-suggestion {
+    padding: 11px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eef2f7;
+    font-size: 0.84rem;
+    line-height: 1.35;
+}
+.memo-address-suggestion:hover {
+    background: #eef6ff;
+}
+.memo-address-suggestion.muted {
+    color: #64748b;
+    cursor: default;
+}
+.memo-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+.memo-detail-field {
+    background: #f8fafc;
+    border: 1px solid #eef2f7;
+    border-radius: 13px;
+    padding: 12px;
+}
+.memo-detail-field span {
+    display: block;
+    color: #64748b;
+    font-size: 0.68rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+.memo-detail-field strong {
+    color: #1e293b;
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+}
+.memo-detail-field.full {
+    grid-column: 1 / -1;
+}
+.memo-client-view {
+    display: none;
+}
+@media(max-width: 850px) {
+    #memoClientsPage {
+        padding: 0 10px 18px;
+    }
+    .memo-clients-toolbar {
+        grid-template-columns: 1fr;
+    }
+    .memo-client-row {
+        grid-template-columns: 1fr;
+    }
+    .memo-client-row-actions {
+        justify-content: flex-start;
+    }
+    .memo-client-form-grid,
+    .memo-detail-grid {
+        grid-template-columns: 1fr;
+    }
+    .memo-client-form-grid .full,
+    .memo-detail-field.full {
+        grid-column: auto;
+    }
+    .memo-address-actions {
+        grid-template-columns: 1fr;
+    }
+}
+/* MEMO GLASS CLIENTI PANEL END */
+
 </style>
+
+<style>
+#memo-role-badge{
+    display:none !important;
+}
+</style>
+
 </head>
 
 <body>
 
-<div id="memo-app-content" class="app-shell" style="display:none;">
+<div class="app-shell">
     <div class="topbar premium-header" style="background: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.28), transparent 26%), radial-gradient(circle at 85% 10%, rgba(255, 255, 255, 0.16), transparent 28%), linear-gradient(135deg, rgb(0, 122, 255) 0%, rgb(0, 122, 255) 45%, rgb(0, 72, 168) 100%);">
     <div class="premium-glow"></div>
 
@@ -5100,231 +5382,6 @@ function downloadAppointmentPdf(index) {
             <div>${app.note ? escapeHtml(app.note) : "&nbsp;"}</div>
         </div>
     </div>
-
-<!-- MEMO GLASS LOGIN + FIREBASE SUPER ADMIN -->
-<div id="memo-login-screen" style="position:fixed;inset:0;background:linear-gradient(135deg,#001b3a,#007aff);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Inter,Arial,sans-serif;">
-  <div style="width:100%;max-width:430px;background:white;border-radius:30px;padding:30px;box-shadow:0 30px 90px rgba(0,0,0,.45);">
-    <div style="text-align:center;margin-bottom:22px;">
-      <div style="width:76px;height:76px;margin:0 auto 14px;border-radius:22px;background:#eef6ff;display:flex;align-items:center;justify-content:center;color:#007aff;font-size:2rem;font-weight:900;">MG</div>
-      <h1 style="margin:0;font-size:2rem;color:#007aff;font-weight:900;letter-spacing:-1px;">Memo Glass</h1>
-      <p style="margin:8px 0 0;color:#64748b;font-size:.95rem;">Accedi o registra il primo Super Admin</p>
-    </div>
-
-    <label style="display:block;font-size:.72rem;font-weight:900;color:#64748b;text-transform:uppercase;margin-bottom:6px;">Email</label>
-    <input id="memo-email" type="email" placeholder="admin@memoglass.it" autocomplete="email" style="width:100%;padding:15px;border-radius:15px;border:1px solid #dbe4ee;margin-bottom:13px;font-size:16px;box-sizing:border-box;">
-
-    <label style="display:block;font-size:.72rem;font-weight:900;color:#64748b;text-transform:uppercase;margin-bottom:6px;">Password</label>
-    <input id="memo-password" type="password" placeholder="Minimo 6 caratteri" autocomplete="current-password" style="width:100%;padding:15px;border-radius:15px;border:1px solid #dbe4ee;margin-bottom:18px;font-size:16px;box-sizing:border-box;">
-
-    <button id="memo-login-btn" type="button" style="width:100%;padding:15px;border:none;border-radius:15px;background:#007aff;color:white;font-weight:900;font-size:16px;margin-bottom:10px;cursor:pointer;">Accedi</button>
-    <button id="memo-register-btn" type="button" style="width:100%;padding:15px;border:none;border-radius:15px;background:#10b981;color:white;font-weight:900;font-size:16px;cursor:pointer;">Prima registrazione / Registrati</button>
-
-    <div id="memo-auth-status" style="margin-top:15px;font-size:.9rem;color:#ef4444;font-weight:800;line-height:1.35;text-align:center;min-height:20px;"></div>
-
-    <div style="margin-top:18px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:15px;padding:12px;color:#64748b;font-size:.8rem;line-height:1.45;">
-      La prima email registrata diventa automaticamente <b>Super Admin</b>. Gli account successivi diventano utenti normali.
-    </div>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  runTransaction,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",
-  authDomain: "memoglass-83f62.firebaseapp.com",
-  projectId: "memoglass-83f62",
-  storageBucket: "memoglass-83f62.firebasestorage.app",
-  messagingSenderId: "776874023547",
-  appId: "1:776874023547:web:0436e0b26cf1221578a0de",
-  measurementId: "G-J628CF7XBE"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const $ = (id) => document.getElementById(id);
-
-function msg(testo, ok = false) {
-  const el = $("memo-auth-status");
-  if (!el) return;
-  el.style.color = ok ? "#10b981" : "#ef4444";
-  el.textContent = testo;
-}
-
-function errore(code) {
-  const map = {
-    "auth/email-already-in-use": "Questa email è già registrata. Premi Accedi.",
-    "auth/invalid-email": "Email non valida.",
-    "auth/weak-password": "Password troppo debole. Usa almeno 6 caratteri.",
-    "auth/invalid-credential": "Email o password non corretti.",
-    "auth/network-request-failed": "Errore rete. Controlla internet.",
-    "permission-denied": "Firestore non è attivo o le regole bloccano il salvataggio Super Admin."
-  };
-  return map[code] || ("Errore Firebase: " + code);
-}
-
-async function assegnaRuolo(user) {
-  const setupRef = doc(db, "system", "adminSetup");
-  const userRef = doc(db, "users", user.uid);
-
-  return await runTransaction(db, async (transaction) => {
-    const setupSnap = await transaction.get(setupRef);
-
-    if (!setupSnap.exists()) {
-      transaction.set(setupRef, {
-        superAdminUid: user.uid,
-        superAdminEmail: user.email,
-        createdAt: serverTimestamp()
-      });
-      transaction.set(userRef, {
-        uid: user.uid,
-        email: user.email,
-        role: "super_admin",
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
-      return "super_admin";
-    }
-
-    transaction.set(userRef, {
-      uid: user.uid,
-      email: user.email,
-      role: "user",
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-    return "user";
-  });
-}
-
-async function leggiRuolo(user) {
-  const ref = doc(db, "users", user.uid);
-  const snap = await getDoc(ref);
-  return snap.exists() ? (snap.data().role || "user") : "user";
-}
-
-function apriGestionale(user, role) {
-  const login = $("memo-login-screen");
-  const appContent = $("memo-app-content");
-  if (login) login.style.display = "none";
-  if (appContent) appContent.style.display = "block";
-
-  if (!$("memo-logout-btn")) {
-    const topActions = document.querySelector(".top-actions") || document.querySelector(".topbar");
-    if (topActions) {
-      const btn = document.createElement("button");
-      btn.id = "memo-logout-btn";
-      btn.type = "button";
-      btn.className = "btn btn-red";
-      btn.textContent = "Esci";
-      btn.onclick = async () => {
-        await signOut(auth);
-        location.reload();
-      };
-      topActions.appendChild(btn);
-    }
-  }
-
-  if (!$("memo-admin-badge")) {
-    const badge = document.createElement("div");
-    badge.id = "memo-admin-badge";
-    badge.style.margin = "10px 24px 2px 36px";
-    badge.style.fontWeight = "900";
-    badge.style.color = "#007aff";
-    badge.style.fontFamily = "Inter, sans-serif";
-    badge.textContent = role === "super_admin" ? "Super Admin: " + user.email : "Utente: " + user.email;
-    const shell = $("memo-app-content");
-    if (shell) shell.prepend(badge);
-  }
-}
-
-function mostraLogin() {
-  const login = $("memo-login-screen");
-  const appContent = $("memo-app-content");
-  if (login) login.style.display = "flex";
-  if (appContent) appContent.style.display = "none";
-}
-
-$("memo-register-btn").addEventListener("click", async () => {
-  const email = $("memo-email").value.trim();
-  const password = $("memo-password").value;
-
-  if (!email || !password) return msg("Inserisci email e password.");
-  if (password.length < 6) return msg("La password deve avere almeno 6 caratteri.");
-
-  try {
-    $("memo-register-btn").disabled = true;
-    msg("Registrazione in corso...", true);
-
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-    const role = await assegnaRuolo(cred.user);
-
-    if (role === "super_admin") {
-      msg("Registrazione completata: sei Super Admin.", true);
-    } else {
-      msg("Registrazione completata: sei utente normale.", true);
-    }
-    apriGestionale(cred.user, role);
-  } catch (e) {
-    msg(errore(e.code || e.message));
-  } finally {
-    $("memo-register-btn").disabled = false;
-  }
-});
-
-$("memo-login-btn").addEventListener("click", async () => {
-  const email = $("memo-email").value.trim();
-  const password = $("memo-password").value;
-
-  if (!email || !password) return msg("Inserisci email e password.");
-
-  try {
-    $("memo-login-btn").disabled = true;
-    msg("Accesso in corso...", true);
-
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    const role = await leggiRuolo(cred.user);
-    apriGestionale(cred.user, role);
-  } catch (e) {
-    msg(errore(e.code || e.message));
-  } finally {
-    $("memo-login-btn").disabled = false;
-  }
-});
-
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    mostraLogin();
-    return;
-  }
-
-  try {
-    const role = await leggiRuolo(user);
-    apriGestionale(user, role);
-  } catch(e) {
-    mostraLogin();
-    msg(errore(e.code || e.message));
-  }
-});
-</script>
-
 </body>
 </html>`;
 
@@ -5734,28 +5791,56 @@ Tel ..."></textarea>
 
 
 
-<!-- MEMO GLASS LOGIN + FIREBASE SUPER ADMIN -->
-<div id="memo-login-screen" style="position:fixed;inset:0;background:linear-gradient(135deg,#001b3a,#007aff);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Inter,Arial,sans-serif;">
-  <div style="width:100%;max-width:430px;background:white;border-radius:30px;padding:30px;box-shadow:0 30px 90px rgba(0,0,0,.45);">
+<!-- MEMO GLASS SAFE LOGIN FIREBASE -->
+<div id="memo-auth-overlay" style="position:fixed;inset:0;background:linear-gradient(135deg,#001b3a,#007aff);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Inter,Arial,sans-serif;">
+  <div style="width:100%;max-width:430px;background:#fff;border-radius:30px;padding:30px;box-shadow:0 30px 90px rgba(0,0,0,.45);">
     <div style="text-align:center;margin-bottom:22px;">
       <div style="width:76px;height:76px;margin:0 auto 14px;border-radius:22px;background:#eef6ff;display:flex;align-items:center;justify-content:center;color:#007aff;font-size:2rem;font-weight:900;">MG</div>
-      <h1 style="margin:0;font-size:2rem;color:#007aff;font-weight:900;letter-spacing:-1px;">Memo Glass</h1>
-      <p style="margin:8px 0 0;color:#64748b;font-size:.95rem;">Accedi o registra il primo Super Admin</p>
+      <h1 style="margin:0;font-size:2rem;color:#007aff;font-weight:900;">Memo Glass</h1>
+      <p style="margin:8px 0 0;color:#64748b;">Accesso gestionale</p>
     </div>
 
-    <label style="display:block;font-size:.72rem;font-weight:900;color:#64748b;text-transform:uppercase;margin-bottom:6px;">Email</label>
-    <input id="memo-email" type="email" placeholder="admin@memoglass.it" autocomplete="email" style="width:100%;padding:15px;border-radius:15px;border:1px solid #dbe4ee;margin-bottom:13px;font-size:16px;box-sizing:border-box;">
+    <input id="memo-auth-email" type="email" placeholder="Email" autocomplete="email" style="width:100%;box-sizing:border-box;padding:15px;border-radius:15px;border:1px solid #dbe4ee;margin-bottom:12px;font-size:16px;">
+    <input id="memo-auth-password" type="password" placeholder="Password minimo 6 caratteri" autocomplete="current-password" style="width:100%;box-sizing:border-box;padding:15px;border-radius:15px;border:1px solid #dbe4ee;margin-bottom:18px;font-size:16px;">
 
-    <label style="display:block;font-size:.72rem;font-weight:900;color:#64748b;text-transform:uppercase;margin-bottom:6px;">Password</label>
-    <input id="memo-password" type="password" placeholder="Minimo 6 caratteri" autocomplete="current-password" style="width:100%;padding:15px;border-radius:15px;border:1px solid #dbe4ee;margin-bottom:18px;font-size:16px;box-sizing:border-box;">
+    <button id="memo-auth-login" type="button" style="width:100%;padding:15px;border:none;border-radius:15px;background:#007aff;color:white;font-weight:900;font-size:16px;margin-bottom:10px;cursor:pointer;">Accedi</button>
+    <button id="memo-auth-register" type="button" style="width:100%;padding:15px;border:none;border-radius:15px;background:#10b981;color:white;font-weight:900;font-size:16px;cursor:pointer;">Prima registrazione / Registrati</button>
 
-    <button id="memo-login-btn" type="button" style="width:100%;padding:15px;border:none;border-radius:15px;background:#007aff;color:white;font-weight:900;font-size:16px;margin-bottom:10px;cursor:pointer;">Accedi</button>
-    <button id="memo-register-btn" type="button" style="width:100%;padding:15px;border:none;border-radius:15px;background:#10b981;color:white;font-weight:900;font-size:16px;cursor:pointer;">Prima registrazione / Registrati</button>
-
-    <div id="memo-auth-status" style="margin-top:15px;font-size:.9rem;color:#ef4444;font-weight:800;line-height:1.35;text-align:center;min-height:20px;"></div>
+    <div id="memo-auth-message" style="margin-top:15px;text-align:center;font-size:.9rem;color:#ef4444;font-weight:800;min-height:22px;"></div>
 
     <div style="margin-top:18px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:15px;padding:12px;color:#64748b;font-size:.8rem;line-height:1.45;">
-      La prima email registrata diventa automaticamente <b>Super Admin</b>. Gli account successivi diventano utenti normali.
+      La prima registrazione diventa <b>Super Admin</b>. Dopo l’accesso il gestionale resta uguale a prima.
+    </div>
+  </div>
+</div>
+
+<div id="memo-users-overlay" class="modal-overlay">
+  <div class="memo-users-modal">
+    <div class="modal-head">
+      <div>
+        <h2>Gestione Utenti</h2>
+        <h3>Ruoli e permessi</h3>
+      </div>
+      <button id="memo-users-close" class="close-x" type="button">✕</button>
+    </div>
+    <div class="memo-users-body">
+      <div style="background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;padding:12px;border-radius:14px;margin-bottom:14px;font-size:.84rem;font-weight:800;">
+        Puoi eliminare l’utente dal gestionale. Per eliminarlo anche da Firebase Authentication serve cancellarlo dalla console Firebase o usare una Cloud Function.
+      </div>
+      <div id="memo-users-status" style="font-weight:900;color:#64748b;margin-bottom:12px;">Caricamento...</div>
+      <div style="overflow-x:auto;">
+        <table class="memo-users-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Ruolo</th>
+              <th>Permessi</th>
+              <th>Azioni</th>
+            </tr>
+          </thead>
+          <tbody id="memo-users-list"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -5774,8 +5859,12 @@ import {
   doc,
   getDoc,
   setDoc,
+  updateDoc,
+  deleteDoc,
   runTransaction,
-  serverTimestamp
+  serverTimestamp,
+  collection,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -5791,171 +5880,2759 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+let memoCurrentUser = null;
+let memoCurrentProfile = null;
 
-const $ = (id) => document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-function msg(testo, ok = false) {
-  const el = $("memo-auth-status");
-  if (!el) return;
+function authMsg(text, ok=false){
+  const el = $("memo-auth-message");
+  if(!el) return;
   el.style.color = ok ? "#10b981" : "#ef4444";
-  el.textContent = testo;
+  el.textContent = text;
 }
 
-function errore(code) {
+function firebaseError(code){
   const map = {
     "auth/email-already-in-use": "Questa email è già registrata. Premi Accedi.",
     "auth/invalid-email": "Email non valida.",
     "auth/weak-password": "Password troppo debole. Usa almeno 6 caratteri.",
     "auth/invalid-credential": "Email o password non corretti.",
-    "auth/network-request-failed": "Errore rete. Controlla internet.",
-    "permission-denied": "Firestore non è attivo o le regole bloccano il salvataggio Super Admin."
+    "auth/network-request-failed": "Errore rete.",
+    "permission-denied": "Firestore non attivo o regole Firestore da configurare."
   };
-  return map[code] || ("Errore Firebase: " + code);
+  return map[code] || "Errore: " + code;
 }
 
-async function assegnaRuolo(user) {
+async function createProfile(user){
   const setupRef = doc(db, "system", "adminSetup");
   const userRef = doc(db, "users", user.uid);
 
-  return await runTransaction(db, async (transaction) => {
+  return await runTransaction(db, async transaction => {
     const setupSnap = await transaction.get(setupRef);
-
-    if (!setupSnap.exists()) {
+    if(!setupSnap.exists()){
+      const profile = {
+        uid: user.uid,
+        email: user.email,
+        role: "super_admin",
+        permissions: { calendar:true, settings:true, users:true, deleteUsers:true },
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
       transaction.set(setupRef, {
         superAdminUid: user.uid,
         superAdminEmail: user.email,
         createdAt: serverTimestamp()
       });
-      transaction.set(userRef, {
-        uid: user.uid,
-        email: user.email,
-        role: "super_admin",
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
-      return "super_admin";
+      transaction.set(userRef, profile);
+      return profile;
     }
 
-    transaction.set(userRef, {
+    const profile = {
       uid: user.uid,
       email: user.email,
       role: "user",
+      permissions: { calendar:true, settings:false, users:false, deleteUsers:false },
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
-    }, { merge: true });
-    return "user";
+    };
+    transaction.set(userRef, profile, { merge:true });
+    return profile;
   });
 }
 
-async function leggiRuolo(user) {
+async function readProfile(user){
   const ref = doc(db, "users", user.uid);
   const snap = await getDoc(ref);
-  return snap.exists() ? (snap.data().role || "user") : "user";
+  if(snap.exists()) return snap.data();
+
+  const profile = {
+    uid:user.uid,
+    email:user.email,
+    role:"user",
+    permissions:{ calendar:true, settings:false, users:false, deleteUsers:false },
+    createdAt:serverTimestamp(),
+    updatedAt:serverTimestamp()
+  };
+  await setDoc(ref, profile, { merge:true });
+  return profile;
 }
 
-function apriGestionale(user, role) {
-  const login = $("memo-login-screen");
-  const appContent = $("memo-app-content");
-  if (login) login.style.display = "none";
-  if (appContent) appContent.style.display = "block";
+function openApp(user, profile){
+  memoCurrentUser = user;
+  memoCurrentProfile = profile;
+  $("memo-auth-overlay").style.display = "none";
 
-  if (!$("memo-logout-btn")) {
-    const topActions = document.querySelector(".top-actions") || document.querySelector(".topbar");
-    if (topActions) {
-      const btn = document.createElement("button");
-      btn.id = "memo-logout-btn";
-      btn.type = "button";
-      btn.className = "btn btn-red";
-      btn.textContent = "Esci";
-      btn.onclick = async () => {
-        await signOut(auth);
-        location.reload();
-      };
-      topActions.appendChild(btn);
-    }
+  addAdminBadge(user, profile);
+  addTopButtons(profile);
+  applyPermissionVisibility(profile);
+}
+
+function addAdminBadge(user, profile) {
+  // Badge ruolo nascosto volutamente
+}
+
+function addTopButtons(profile){
+  const topActions = document.querySelector(".top-actions") || document.querySelector(".topbar");
+  if(!topActions) return;
+
+  const canUsers = profile.role === "super_admin" || profile.permissions?.users;
+
+  if(canUsers && !$("memo-open-users")){
+    const b = document.createElement("button");
+    b.id = "memo-open-users";
+    b.type = "button";
+    b.className = "btn btn-white";
+    b.textContent = "Gestione Utenti";
+    b.onclick = openUsersPanel;
+    topActions.appendChild(b);
   }
 
-  if (!$("memo-admin-badge")) {
-    const badge = document.createElement("div");
-    badge.id = "memo-admin-badge";
-    badge.style.margin = "10px 24px 2px 36px";
-    badge.style.fontWeight = "900";
-    badge.style.color = "#007aff";
-    badge.style.fontFamily = "Inter, sans-serif";
-    badge.textContent = role === "super_admin" ? "Super Admin: " + user.email : "Utente: " + user.email;
-    const shell = $("memo-app-content");
-    if (shell) shell.prepend(badge);
+  if(!$("memo-logout")){
+    const out = document.createElement("button");
+    out.id = "memo-logout";
+    out.type = "button";
+    out.className = "btn btn-red";
+    out.textContent = "Esci";
+    out.onclick = async () => { await signOut(auth); location.reload(); };
+    topActions.appendChild(out);
   }
 }
 
-function mostraLogin() {
-  const login = $("memo-login-screen");
-  const appContent = $("memo-app-content");
-  if (login) login.style.display = "flex";
-  if (appContent) appContent.style.display = "none";
+function applyPermissionVisibility(profile){
+  const canSettings = profile.role === "super_admin" || profile.permissions?.settings;
+  document.querySelectorAll("[onclick*='openSettingsModal'], .settings-gear").forEach(el => {
+    el.style.display = canSettings ? "" : "none";
+  });
 }
 
-$("memo-register-btn").addEventListener("click", async () => {
-  const email = $("memo-email").value.trim();
-  const password = $("memo-password").value;
+$("memo-auth-register").addEventListener("click", async () => {
+  const email = $("memo-auth-email").value.trim();
+  const password = $("memo-auth-password").value;
+  if(!email || !password) return authMsg("Inserisci email e password.");
+  if(password.length < 6) return authMsg("Password minimo 6 caratteri.");
 
-  if (!email || !password) return msg("Inserisci email e password.");
-  if (password.length < 6) return msg("La password deve avere almeno 6 caratteri.");
-
-  try {
-    $("memo-register-btn").disabled = true;
-    msg("Registrazione in corso...", true);
-
+  try{
+    $("memo-auth-register").disabled = true;
+    authMsg("Registrazione in corso...", true);
     const cred = await createUserWithEmailAndPassword(auth, email, password);
-    const role = await assegnaRuolo(cred.user);
-
-    if (role === "super_admin") {
-      msg("Registrazione completata: sei Super Admin.", true);
-    } else {
-      msg("Registrazione completata: sei utente normale.", true);
-    }
-    apriGestionale(cred.user, role);
-  } catch (e) {
-    msg(errore(e.code || e.message));
-  } finally {
-    $("memo-register-btn").disabled = false;
+    const profile = await createProfile(cred.user);
+    authMsg("Registrazione completata.", true);
+    openApp(cred.user, profile);
+  }catch(e){
+    authMsg(firebaseError(e.code || e.message));
+  }finally{
+    $("memo-auth-register").disabled = false;
   }
 });
 
-$("memo-login-btn").addEventListener("click", async () => {
-  const email = $("memo-email").value.trim();
-  const password = $("memo-password").value;
+$("memo-auth-login").addEventListener("click", async () => {
+  const email = $("memo-auth-email").value.trim();
+  const password = $("memo-auth-password").value;
+  if(!email || !password) return authMsg("Inserisci email e password.");
 
-  if (!email || !password) return msg("Inserisci email e password.");
-
-  try {
-    $("memo-login-btn").disabled = true;
-    msg("Accesso in corso...", true);
-
+  try{
+    $("memo-auth-login").disabled = true;
+    authMsg("Accesso in corso...", true);
     const cred = await signInWithEmailAndPassword(auth, email, password);
-    const role = await leggiRuolo(cred.user);
-    apriGestionale(cred.user, role);
-  } catch (e) {
-    msg(errore(e.code || e.message));
-  } finally {
-    $("memo-login-btn").disabled = false;
+    const profile = await readProfile(cred.user);
+    openApp(cred.user, profile);
+  }catch(e){
+    authMsg(firebaseError(e.code || e.message));
+  }finally{
+    $("memo-auth-login").disabled = false;
   }
 });
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    mostraLogin();
+onAuthStateChanged(auth, async user => {
+  if(!user){
+    $("memo-auth-overlay").style.display = "flex";
+    return;
+  }
+  try{
+    const profile = await readProfile(user);
+    openApp(user, profile);
+  }catch(e){
+    $("memo-auth-overlay").style.display = "flex";
+    authMsg(firebaseError(e.code || e.message));
+  }
+});
+
+$("memo-users-close").addEventListener("click", () => {
+  $("memo-users-overlay").style.display = "none";
+});
+
+async function openUsersPanel(){
+  if(!(memoCurrentProfile?.role === "super_admin" || memoCurrentProfile?.permissions?.users)){
+    alert("Non hai permesso.");
+    return;
+  }
+  $("memo-users-overlay").style.display = "flex";
+  await loadUsers();
+}
+
+async function loadUsers(){
+  const list = $("memo-users-list");
+  const status = $("memo-users-status");
+  list.innerHTML = "";
+  status.textContent = "Caricamento utenti...";
+
+  try{
+    const snap = await getDocs(collection(db, "users"));
+    const users = [];
+    snap.forEach(d => users.push({ id:d.id, ...d.data() }));
+    users.sort((a,b) => String(a.email || "").localeCompare(String(b.email || "")));
+
+    status.textContent = users.length + " utenti trovati.";
+
+    users.forEach(u => {
+      const p = u.permissions || {};
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><strong>${safe(u.email || "")}</strong><br><small>${safe(u.uid || u.id)}</small></td>
+        <td>
+          <select data-role="${safe(u.id)}">
+            <option value="user" ${u.role === "user" ? "selected" : ""}>Utente</option>
+            <option value="admin" ${u.role === "admin" ? "selected" : ""}>Admin</option>
+            <option value="super_admin" ${u.role === "super_admin" ? "selected" : ""}>Super Admin</option>
+          </select>
+        </td>
+        <td>
+          <div class="memo-permission-list">
+            <label><input type="checkbox" data-uid="${safe(u.id)}" data-perm="calendar" ${p.calendar !== false ? "checked" : ""}> Calendario</label>
+            <label><input type="checkbox" data-uid="${safe(u.id)}" data-perm="settings" ${p.settings ? "checked" : ""}> Impostazioni</label>
+            <label><input type="checkbox" data-uid="${safe(u.id)}" data-perm="users" ${p.users ? "checked" : ""}> Gestione utenti</label>
+            <label><input type="checkbox" data-uid="${safe(u.id)}" data-perm="deleteUsers" ${p.deleteUsers ? "checked" : ""}> Eliminare utenti</label>
+          </div>
+        </td>
+        <td>
+          <button type="button" class="btn btn-blue" data-save="${safe(u.id)}">Salva</button>
+          <button type="button" class="btn btn-red" data-delete="${safe(u.id)}" ${u.id === memoCurrentUser.uid ? "disabled" : ""}>Elimina</button>
+        </td>
+      `;
+      list.appendChild(tr);
+    });
+
+    list.querySelectorAll("[data-save]").forEach(b => {
+      b.onclick = () => saveUser(b.dataset.save);
+    });
+    list.querySelectorAll("[data-delete]").forEach(b => {
+      b.onclick = () => deleteUserDoc(b.dataset.delete);
+    });
+
+  }catch(e){
+    status.textContent = firebaseError(e.code || e.message);
+  }
+}
+
+async function saveUser(uid){
+  const role = document.querySelector(`[data-role="${uid}"]`).value;
+  const checks = document.querySelectorAll(`input[data-uid="${uid}"][data-perm]`);
+  const permissions = {};
+  checks.forEach(c => permissions[c.dataset.perm] = c.checked);
+
+  try{
+    await updateDoc(doc(db, "users", uid), {
+      role,
+      permissions,
+      updatedAt: serverTimestamp()
+    });
+    $("memo-users-status").textContent = "Utente salvato.";
+    await loadUsers();
+  }catch(e){
+    $("memo-users-status").textContent = firebaseError(e.code || e.message);
+  }
+}
+
+async function deleteUserDoc(uid){
+  if(!memoCurrentProfile?.permissions?.deleteUsers && memoCurrentProfile?.role !== "super_admin"){
+    alert("Non hai permesso di eliminare utenti.");
+    return;
+  }
+  if(!confirm("Eliminare questo utente dal gestionale?")) return;
+
+  try{
+    await deleteDoc(doc(db, "users", uid));
+    $("memo-users-status").textContent = "Utente eliminato dal gestionale.";
+    await loadUsers();
+  }catch(e){
+    $("memo-users-status").textContent = firebaseError(e.code || e.message);
+  }
+}
+
+function safe(str){
+  return String(str).replace(/[&<>"']/g, m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[m]));
+}
+</script>
+
+
+
+
+
+<!-- MEMO GLASS CLIENTI SECTION START -->
+<div id="memoClientsPage">
+  <div class="memo-page-head">
+    <div>
+      <h2>Clienti</h2>
+      <p id="memoClientsPageSubtitle">Archivio clienti, anagrafica e dati aziendali</p>
+    </div>
+    <div class="memo-page-actions">
+      <button type="button" class="btn btn-white" id="memoBackDashboardBtn">Torna al calendario</button>
+      <button type="button" class="btn btn-white" id="memoClientListBtn">Lista clienti</button>
+      <button type="button" class="btn btn-green" id="memoNewClientPageBtn">Nuovo cliente</button>
+    </div>
+  </div>
+
+  <section id="memoClientListView" class="memo-client-view memo-page-card">
+    <div class="memo-clients-toolbar">
+      <input type="text" id="memoClientSearchPage" placeholder="Cerca cliente, telefono, targa, azienda, partita IVA...">
+      <button type="button" class="btn btn-blue" id="memoReloadClientsBtn">Aggiorna</button>
+    </div>
+    <div id="memoClientsStatusPage" style="font-weight:900;color:#64748b;margin-bottom:12px;">Caricamento clienti...</div>
+    <div id="memoClientsListPage" class="memo-client-list-page"></div>
+  </section>
+
+  <section id="memoClientFormView" class="memo-client-view memo-page-card">
+    <h3 id="memoClientFormTitlePage" style="margin:0 0 14px;color:#334155;">Nuovo cliente</h3>
+
+    <div class="memo-client-form-grid">
+      <div class="full">
+        <label>Tipo registrazione</label>
+        <select id="memoClientTypePage">
+          <option value="privato">Privato</option>
+          <option value="azienda">Azienda</option>
+        </select>
+      </div>
+
+      <div class="full" id="memoPrivateNameBoxPage">
+        <label>Nome e Cognome</label>
+        <input type="text" id="memoClientNamePage" placeholder="Mario Rossi">
+      </div>
+
+      <div class="full" id="memoCompanyNameBoxPage" style="display:none;">
+        <label>Ragione sociale</label>
+        <input type="text" id="memoCompanyNamePage" placeholder="Memo Glass S.R.L.">
+      </div>
+
+      <div>
+        <label>Cellulare</label>
+        <input type="tel" id="memoClientPhonePage" placeholder="3331234567">
+      </div>
+
+      <div>
+        <label>Email</label>
+        <input type="email" id="memoClientEmailPage" placeholder="cliente@email.it">
+      </div>
+
+      <div>
+        <label>Targa</label>
+        <input type="text" id="memoClientPlatePage" placeholder="AA000BB">
+      </div>
+
+      <div>
+        <label>Marca e modello</label>
+        <input type="text" id="memoClientCarPage" placeholder="Fiat Panda">
+      </div>
+
+      <div class="full memo-address-search-wrap">
+        <label>Via / indirizzo tramite mappa</label>
+        <div class="memo-address-actions">
+          <input type="text" id="memoClientAddressPage" placeholder="Scrivi via, numero, città">
+          <button type="button" class="btn btn-blue" id="memoSearchAddressBtn">Cerca mappa</button>
+          <button type="button" class="btn btn-gray" id="memoOpenMapBtn">Apri mappa</button>
+        </div>
+        <input type="hidden" id="memoClientLatPage">
+        <input type="hidden" id="memoClientLonPage">
+        <div id="memoAddressSuggestionsPage" class="memo-address-suggestions"></div>
+      </div>
+
+      <div class="memo-company-data-box" id="memoCompanyBoxPage">
+        <div class="memo-client-form-grid">
+          <div class="full">
+            <label>Referente azienda</label>
+            <input type="text" id="memoCompanyContactPage" placeholder="Nome referente">
+          </div>
+          <div>
+            <label>Partita IVA</label>
+            <input type="text" id="memoVatNumberPage" placeholder="IT00000000000">
+          </div>
+          <div>
+            <label>Codice Univoco</label>
+            <input type="text" id="memoSdiCodePage" placeholder="XXXXXXX">
+          </div>
+          <div class="full">
+            <label>PEC</label>
+            <input type="email" id="memoPecPage" placeholder="azienda@pec.it">
+          </div>
+        </div>
+      </div>
+
+      <div class="full">
+        <label>Note cliente</label>
+        <textarea id="memoClientNotesPage" placeholder="Note utili per appuntamenti futuri"></textarea>
+      </div>
+
+      <div class="full" style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button type="button" class="btn btn-blue" id="memoSaveClientPageBtn">Salva cliente</button>
+        <button type="button" class="btn btn-gray" id="memoResetClientPageBtn">Pulisci campi</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="memoClientDetailView" class="memo-client-view memo-page-card">
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
+      <h3 style="margin:0;color:#334155;">Anagrafica cliente</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button type="button" class="btn btn-blue" id="memoEditClientFromDetailBtn">Modifica anagrafica</button>
+        <button type="button" class="btn btn-green" id="memoUseClientDetailBtn">Usa per appuntamento</button>
+        <button type="button" class="btn btn-red" id="memoDeleteClientDetailBtn">Elimina cliente</button>
+      </div>
+    </div>
+    <div id="memoClientDetailBox" class="memo-detail-grid"></div>
+  </section>
+</div>
+
+<script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  addDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const memoClientFirebaseConfigV2 = {
+  apiKey: "AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",
+  authDomain: "memoglass-83f62.firebaseapp.com",
+  projectId: "memoglass-83f62",
+  storageBucket: "memoglass-83f62.firebasestorage.app",
+  messagingSenderId: "776874023547",
+  appId: "1:776874023547:web:0436e0b26cf1221578a0de",
+  measurementId: "G-J628CF7XBE"
+};
+
+const memoClientAppV2 = getApps().length ? getApp() : initializeApp(memoClientFirebaseConfigV2);
+const memoClientDbV2 = getFirestore(memoClientAppV2);
+
+let memoClientsV2 = [];
+let memoEditingClientIdV2 = null;
+let memoCurrentDetailClientIdV2 = null;
+let memoAddressTimerV2 = null;
+
+const mcv2 = (id) => document.getElementById(id);
+
+function memoInitClientsPageV2() {
+  memoAddClientsTopButtonV2();
+
+  mcv2("memoBackDashboardBtn").onclick = memoBackToCalendarV2;
+  mcv2("memoClientListBtn").onclick = () => memoShowClientsViewV2("list");
+  mcv2("memoNewClientPageBtn").onclick = memoOpenNewClientV2;
+  mcv2("memoReloadClientsBtn").onclick = memoLoadClientsV2;
+  mcv2("memoClientSearchPage").oninput = memoRenderClientsV2;
+  mcv2("memoClientTypePage").onchange = memoToggleCompanyFieldsV2;
+  mcv2("memoSaveClientPageBtn").onclick = memoSaveClientV2;
+  mcv2("memoResetClientPageBtn").onclick = memoResetClientFormV2;
+  mcv2("memoEditClientFromDetailBtn").onclick = () => memoEditClientV2(memoCurrentDetailClientIdV2);
+  mcv2("memoUseClientDetailBtn").onclick = () => memoUseClientForAppointmentV2(memoCurrentDetailClientIdV2);
+  mcv2("memoDeleteClientDetailBtn").onclick = () => memoDeleteClientV2(memoCurrentDetailClientIdV2);
+  mcv2("memoSearchAddressBtn").onclick = () => memoSearchAddressV2(mcv2("memoClientAddressPage").value);
+  mcv2("memoOpenMapBtn").onclick = memoOpenSelectedMapV2;
+
+  mcv2("memoClientAddressPage").addEventListener("input", () => {
+    clearTimeout(memoAddressTimerV2);
+    const q = mcv2("memoClientAddressPage").value.trim();
+    if (q.length < 4) {
+      memoHideAddressSuggestionsV2();
+      return;
+    }
+    memoAddressTimerV2 = setTimeout(() => memoSearchAddressV2(q), 650);
+  });
+
+  document.addEventListener("click", (e) => {
+    const wrap = e.target.closest(".memo-address-search-wrap");
+    if (!wrap) memoHideAddressSuggestionsV2();
+  });
+}
+
+function memoAddClientsTopButtonV2() {
+  if (mcv2("memo-open-clients-page")) return;
+
+  const topActions = document.querySelector(".top-actions") || document.querySelector(".topbar");
+  if (!topActions) return;
+
+  const btn = document.createElement("button");
+  btn.id = "memo-open-clients-page";
+  btn.type = "button";
+  btn.className = "btn btn-white";
+  btn.textContent = "Clienti";
+  btn.onclick = memoOpenClientsPageV2;
+  topActions.appendChild(btn);
+}
+
+async function memoOpenClientsPageV2() {
+  const appShell = document.querySelector(".app-shell");
+  if (appShell) appShell.style.display = "none";
+
+  mcv2("memoClientsPage").style.display = "block";
+  memoShowClientsViewV2("list");
+  await memoLoadClientsV2();
+}
+
+function memoBackToCalendarV2() {
+  mcv2("memoClientsPage").style.display = "none";
+  const appShell = document.querySelector(".app-shell");
+  if (appShell) appShell.style.display = "";
+}
+
+function memoShowClientsViewV2(view) {
+  ["memoClientListView", "memoClientFormView", "memoClientDetailView"].forEach(id => {
+    mcv2(id).style.display = "none";
+  });
+
+  if (view === "list") {
+    mcv2("memoClientListView").style.display = "block";
+    mcv2("memoClientsPageSubtitle").textContent = "Lista clienti registrati";
+  }
+
+  if (view === "form") {
+    mcv2("memoClientFormView").style.display = "block";
+    mcv2("memoClientsPageSubtitle").textContent = memoEditingClientIdV2 ? "Modifica anagrafica cliente" : "Nuova registrazione cliente";
+  }
+
+  if (view === "detail") {
+    mcv2("memoClientDetailView").style.display = "block";
+    mcv2("memoClientsPageSubtitle").textContent = "Scheda anagrafica cliente";
+  }
+}
+
+function memoOpenNewClientV2() {
+  memoResetClientFormV2();
+  memoShowClientsViewV2("form");
+}
+
+function memoToggleCompanyFieldsV2() {
+  const isCompany = mcv2("memoClientTypePage").value === "azienda";
+  mcv2("memoCompanyBoxPage").style.display = isCompany ? "block" : "none";
+  mcv2("memoCompanyNameBoxPage").style.display = isCompany ? "block" : "none";
+  mcv2("memoPrivateNameBoxPage").style.display = isCompany ? "none" : "block";
+}
+
+function memoClientDataFromFormV2() {
+  const type = mcv2("memoClientTypePage").value;
+  const isCompany = type === "azienda";
+
+  return {
+    type,
+    name: isCompany ? mcv2("memoCompanyNamePage").value.trim() : mcv2("memoClientNamePage").value.trim(),
+    privateName: mcv2("memoClientNamePage").value.trim(),
+    companyName: mcv2("memoCompanyNamePage").value.trim(),
+    phone: mcv2("memoClientPhonePage").value.trim(),
+    email: mcv2("memoClientEmailPage").value.trim(),
+    plate: mcv2("memoClientPlatePage").value.trim().toUpperCase(),
+    car: mcv2("memoClientCarPage").value.trim(),
+    address: mcv2("memoClientAddressPage").value.trim(),
+    lat: mcv2("memoClientLatPage").value.trim(),
+    lon: mcv2("memoClientLonPage").value.trim(),
+    companyContact: mcv2("memoCompanyContactPage").value.trim(),
+    vatNumber: mcv2("memoVatNumberPage").value.trim(),
+    sdiCode: mcv2("memoSdiCodePage").value.trim(),
+    pec: mcv2("memoPecPage").value.trim(),
+    notes: mcv2("memoClientNotesPage").value.trim(),
+    updatedAt: serverTimestamp()
+  };
+}
+
+async function memoSaveClientV2() {
+  const data = memoClientDataFromFormV2();
+
+  if (!data.name) {
+    alert(data.type === "azienda" ? "Inserisci la ragione sociale." : "Inserisci nome e cognome.");
     return;
   }
 
   try {
-    const role = await leggiRuolo(user);
-    apriGestionale(user, role);
-  } catch(e) {
-    mostraLogin();
-    msg(errore(e.code || e.message));
+    mcv2("memoSaveClientPageBtn").disabled = true;
+
+    if (memoEditingClientIdV2) {
+      await updateDoc(doc(memoClientDbV2, "clients", memoEditingClientIdV2), data);
+      memoCurrentDetailClientIdV2 = memoEditingClientIdV2;
+    } else {
+      const newDoc = await addDoc(collection(memoClientDbV2, "clients"), {
+        ...data,
+        createdAt: serverTimestamp()
+      });
+      memoCurrentDetailClientIdV2 = newDoc.id;
+    }
+
+    await memoLoadClientsV2(false);
+    memoRenderClientDetailV2(memoCurrentDetailClientIdV2);
+    memoShowClientsViewV2("detail");
+  } catch (e) {
+    alert("Errore salvataggio cliente: " + (e.code || e.message));
+  } finally {
+    mcv2("memoSaveClientPageBtn").disabled = false;
   }
+}
+
+async function memoLoadClientsV2(render = true) {
+  const status = mcv2("memoClientsStatusPage");
+  if (status) status.textContent = "Caricamento clienti...";
+
+  try {
+    const snap = await getDocs(collection(memoClientDbV2, "clients"));
+    memoClientsV2 = [];
+    snap.forEach(d => memoClientsV2.push({ id: d.id, ...d.data() }));
+    memoClientsV2.sort((a,b) => String(a.name || "").localeCompare(String(b.name || "")));
+    if (render) memoRenderClientsV2();
+  } catch (e) {
+    if (status) status.textContent = "Errore caricamento clienti: " + (e.code || e.message);
+  }
+}
+
+function memoRenderClientsV2() {
+  const status = mcv2("memoClientsStatusPage");
+  const list = mcv2("memoClientsListPage");
+  const q = (mcv2("memoClientSearchPage")?.value || "").toLowerCase().trim();
+
+  const filtered = memoClientsV2.filter(c => {
+    const text = [
+      c.name, c.privateName, c.companyName, c.phone, c.email, c.plate, c.car,
+      c.address, c.vatNumber, c.sdiCode, c.pec, c.companyContact
+    ].join(" ").toLowerCase();
+    return !q || text.includes(q);
+  });
+
+  status.textContent = filtered.length + " clienti trovati.";
+  list.innerHTML = "";
+
+  filtered.forEach(c => {
+    const row = document.createElement("div");
+    row.className = "memo-client-row";
+
+    const label = c.type === "azienda" ? "Azienda" : "Privato";
+    const aziendaInfo = c.type === "azienda" ? ` | P.IVA: ${memoEscV2(c.vatNumber || "-")} | Codice: ${memoEscV2(c.sdiCode || "-")}` : "";
+
+    row.innerHTML = `
+      <div>
+        <strong>${memoEscV2(c.name || "Cliente senza nome")}</strong>
+        <small>
+          ${label} | Tel: ${memoEscV2(c.phone || "-")} | Targa: ${memoEscV2(c.plate || "-")} | Auto: ${memoEscV2(c.car || "-")}<br>
+          ${memoEscV2(c.address || "Nessun indirizzo")}${aziendaInfo}
+        </small>
+      </div>
+      <div class="memo-client-row-actions">
+        <button type="button" class="btn btn-blue" data-detail-client-v2="${memoEscV2(c.id)}">Vedi anagrafica</button>
+        <button type="button" class="btn btn-green" data-use-client-v2="${memoEscV2(c.id)}">Usa per appuntamento</button>
+      </div>
+    `;
+
+    list.appendChild(row);
+  });
+
+  list.querySelectorAll("[data-detail-client-v2]").forEach(btn => {
+    btn.onclick = () => {
+      memoRenderClientDetailV2(btn.dataset.detailClientV2);
+      memoShowClientsViewV2("detail");
+    };
+  });
+
+  list.querySelectorAll("[data-use-client-v2]").forEach(btn => {
+    btn.onclick = () => memoUseClientForAppointmentV2(btn.dataset.useClientV2);
+  });
+}
+
+function memoRenderClientDetailV2(id) {
+  const c = memoClientsV2.find(x => x.id === id);
+  if (!c) return;
+
+  memoCurrentDetailClientIdV2 = id;
+  const box = mcv2("memoClientDetailBox");
+
+  const mapText = c.lat && c.lon ? `${c.lat}, ${c.lon}` : "-";
+  const typeText = c.type === "azienda" ? "Azienda" : "Privato";
+
+  box.innerHTML = `
+    ${memoDetailFieldV2("Tipo cliente", typeText)}
+    ${memoDetailFieldV2(c.type === "azienda" ? "Ragione sociale" : "Nome e cognome", c.name || "-")}
+    ${memoDetailFieldV2("Telefono", c.phone || "-")}
+    ${memoDetailFieldV2("Email", c.email || "-")}
+    ${memoDetailFieldV2("Targa", c.plate || "-")}
+    ${memoDetailFieldV2("Auto", c.car || "-")}
+    ${memoDetailFieldV2("Indirizzo", c.address || "-", true)}
+    ${memoDetailFieldV2("Coordinate mappa", mapText)}
+    ${c.type === "azienda" ? memoDetailFieldV2("Referente azienda", c.companyContact || "-") : ""}
+    ${c.type === "azienda" ? memoDetailFieldV2("Partita IVA", c.vatNumber || "-") : ""}
+    ${c.type === "azienda" ? memoDetailFieldV2("Codice Univoco", c.sdiCode || "-") : ""}
+    ${c.type === "azienda" ? memoDetailFieldV2("PEC", c.pec || "-", true) : ""}
+    ${memoDetailFieldV2("Note", c.notes || "-", true)}
+  `;
+}
+
+function memoDetailFieldV2(label, value, full = false) {
+  return `<div class="memo-detail-field ${full ? "full" : ""}">
+    <span>${memoEscV2(label)}</span>
+    <strong>${memoEscV2(value)}</strong>
+  </div>`;
+}
+
+function memoEditClientV2(id) {
+  const c = memoClientsV2.find(x => x.id === id);
+  if (!c) return;
+
+  memoEditingClientIdV2 = id;
+  mcv2("memoClientFormTitlePage").textContent = "Modifica anagrafica";
+  mcv2("memoSaveClientPageBtn").textContent = "Salva modifiche";
+
+  mcv2("memoClientTypePage").value = c.type || "privato";
+  memoToggleCompanyFieldsV2();
+
+  mcv2("memoClientNamePage").value = c.privateName || (c.type !== "azienda" ? c.name || "" : "");
+  mcv2("memoCompanyNamePage").value = c.companyName || (c.type === "azienda" ? c.name || "" : "");
+  mcv2("memoClientPhonePage").value = c.phone || "";
+  mcv2("memoClientEmailPage").value = c.email || "";
+  mcv2("memoClientPlatePage").value = c.plate || "";
+  mcv2("memoClientCarPage").value = c.car || "";
+  mcv2("memoClientAddressPage").value = c.address || "";
+  mcv2("memoClientLatPage").value = c.lat || "";
+  mcv2("memoClientLonPage").value = c.lon || "";
+  mcv2("memoCompanyContactPage").value = c.companyContact || "";
+  mcv2("memoVatNumberPage").value = c.vatNumber || "";
+  mcv2("memoSdiCodePage").value = c.sdiCode || "";
+  mcv2("memoPecPage").value = c.pec || "";
+  mcv2("memoClientNotesPage").value = c.notes || "";
+
+  memoShowClientsViewV2("form");
+}
+
+async function memoDeleteClientV2(id) {
+  if (!id) return;
+  if (!confirm("Vuoi eliminare questo cliente?")) return;
+
+  try {
+    await deleteDoc(doc(memoClientDbV2, "clients", id));
+    await memoLoadClientsV2(false);
+    memoShowClientsViewV2("list");
+    memoRenderClientsV2();
+  } catch (e) {
+    alert("Errore eliminazione cliente: " + (e.code || e.message));
+  }
+}
+
+function memoUseClientForAppointmentV2(id) {
+  const c = memoClientsV2.find(x => x.id === id);
+  if (!c) return;
+
+  memoBackToCalendarV2();
+
+  setTimeout(() => {
+    const displayName = c.type === "azienda"
+      ? (c.companyContact ? `${c.companyContact} - ${c.companyName || c.name}` : (c.companyName || c.name))
+      : c.name;
+
+    memoSetIfExistsV2("nome", displayName || "");
+    memoSetIfExistsV2("cell", c.phone || "");
+    memoSetIfExistsV2("targa", c.plate || "");
+    memoSetIfExistsV2("auto", c.car || "");
+    memoSetIfExistsV2("posizione", c.address || "");
+    memoSetIfExistsV2("presso", c.type === "azienda" ? (c.companyName || c.name || "Azienda") : (c.name || "Cliente"));
+
+    const tipoCliente = document.getElementById("tipoCliente");
+    if (tipoCliente) {
+      const wanted = c.type === "azienda" ? "Azienda" : "Privato";
+      Array.from(tipoCliente.options).forEach(opt => {
+        if (opt.value.toLowerCase() === wanted.toLowerCase() || opt.textContent.toLowerCase() === wanted.toLowerCase()) {
+          tipoCliente.value = opt.value;
+        }
+      });
+    }
+
+    const servizioMobile = document.getElementById("servizioMobile");
+    if (servizioMobile && c.address) {
+      servizioMobile.checked = true;
+      if (typeof window.toggleMobileServiceFields === "function") window.toggleMobileServiceFields();
+    }
+
+    if (!document.getElementById("nome")) {
+      alert("Cliente selezionato. Apri un appuntamento e premi di nuovo 'Usa per appuntamento'.");
+    }
+  }, 250);
+}
+
+function memoSetIfExistsV2(id, value) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.value = value;
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+}
+
+function memoResetClientFormV2() {
+  memoEditingClientIdV2 = null;
+  mcv2("memoClientFormTitlePage").textContent = "Nuovo cliente";
+  mcv2("memoSaveClientPageBtn").textContent = "Salva cliente";
+
+  [
+    "memoClientNamePage","memoCompanyNamePage","memoClientPhonePage","memoClientEmailPage",
+    "memoClientPlatePage","memoClientCarPage","memoClientAddressPage","memoClientLatPage",
+    "memoClientLonPage","memoCompanyContactPage","memoVatNumberPage","memoSdiCodePage",
+    "memoPecPage","memoClientNotesPage"
+  ].forEach(id => {
+    const el = mcv2(id);
+    if (el) el.value = "";
+  });
+
+  mcv2("memoClientTypePage").value = "privato";
+  memoToggleCompanyFieldsV2();
+  memoHideAddressSuggestionsV2();
+}
+
+async function memoSearchAddressV2(query) {
+  query = String(query || "").trim();
+  const box = mcv2("memoAddressSuggestionsPage");
+
+  if (query.length < 4) {
+    memoHideAddressSuggestionsV2();
+    return;
+  }
+
+  box.style.display = "block";
+  box.innerHTML = `<div class="memo-address-suggestion muted">Ricerca indirizzo in corso...</div>`;
+
+  try {
+    const url = "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&countrycodes=it&q=" + encodeURIComponent(query);
+    const res = await fetch(url, {
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+    const data = await res.json();
+
+    if (!data.length) {
+      box.innerHTML = `<div class="memo-address-suggestion muted">Nessun indirizzo trovato.</div>`;
+      return;
+    }
+
+    box.innerHTML = "";
+    data.forEach(place => {
+      const div = document.createElement("div");
+      div.className = "memo-address-suggestion";
+      div.textContent = place.display_name;
+      div.onclick = () => {
+        mcv2("memoClientAddressPage").value = place.display_name;
+        mcv2("memoClientLatPage").value = place.lat || "";
+        mcv2("memoClientLonPage").value = place.lon || "";
+        memoHideAddressSuggestionsV2();
+      };
+      box.appendChild(div);
+    });
+  } catch (e) {
+    box.innerHTML = `<div class="memo-address-suggestion muted">Errore ricerca mappa. Controlla la connessione.</div>`;
+  }
+}
+
+function memoHideAddressSuggestionsV2() {
+  const box = mcv2("memoAddressSuggestionsPage");
+  if (box) {
+    box.style.display = "none";
+    box.innerHTML = "";
+  }
+}
+
+function memoOpenSelectedMapV2() {
+  const address = mcv2("memoClientAddressPage").value.trim();
+  const lat = mcv2("memoClientLatPage").value.trim();
+  const lon = mcv2("memoClientLonPage").value.trim();
+
+  let url = "";
+  if (lat && lon) {
+    url = `https://www.openstreetmap.org/?mlat=${encodeURIComponent(lat)}&mlon=${encodeURIComponent(lon)}#map=18/${encodeURIComponent(lat)}/${encodeURIComponent(lon)}`;
+  } else if (address) {
+    url = `https://www.openstreetmap.org/search?query=${encodeURIComponent(address)}`;
+  } else {
+    alert("Prima inserisci o cerca un indirizzo.");
+    return;
+  }
+
+  window.open(url, "_blank");
+}
+
+function memoEscV2(str) {
+  return String(str).replace(/[&<>"']/g, m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[m]));
+}
+
+window.addEventListener("load", memoInitClientsPageV2);
+</script>
+<!-- MEMO GLASS CLIENTI SECTION END -->
+
+
+
+<!-- MEMO GLASS CLIENTI PAGINA SEPARATA FIX -->
+<script>
+window.addEventListener("load", function () {
+  const clientsPage = document.getElementById("memoClientsPage");
+  const appShell = document.querySelector(".app-shell");
+
+  function showCalendarHome() {
+    if (clientsPage) {
+      clientsPage.style.display = "none";
+      clientsPage.style.position = "";
+      clientsPage.style.inset = "";
+      clientsPage.style.zIndex = "";
+      clientsPage.style.background = "";
+      clientsPage.style.overflowY = "";
+      clientsPage.style.padding = "";
+      clientsPage.style.margin = "";
+      clientsPage.style.maxWidth = "";
+      clientsPage.style.width = "";
+      clientsPage.style.minHeight = "";
+    }
+
+    if (appShell) {
+      appShell.style.display = "";
+      appShell.style.visibility = "visible";
+    }
+
+    document.body.style.overflow = "";
+    window.scrollTo(0, 0);
+  }
+
+  function showClientsPage() {
+    if (appShell) {
+      appShell.style.display = "none";
+    }
+
+    if (clientsPage) {
+      clientsPage.style.display = "block";
+      clientsPage.style.position = "fixed";
+      clientsPage.style.inset = "0";
+      clientsPage.style.zIndex = "99990";
+      clientsPage.style.background = "#f3f6fb";
+      clientsPage.style.overflowY = "auto";
+      clientsPage.style.padding = "16px";
+      clientsPage.style.margin = "0";
+      clientsPage.style.maxWidth = "none";
+      clientsPage.style.width = "100vw";
+      clientsPage.style.minHeight = "100vh";
+    }
+
+    document.body.style.overflow = "hidden";
+    window.scrollTo(0, 0);
+
+    const listView = document.getElementById("memoClientListView");
+    const formView = document.getElementById("memoClientFormView");
+    const detailView = document.getElementById("memoClientDetailView");
+
+    if (listView) listView.style.display = "block";
+    if (formView) formView.style.display = "none";
+    if (detailView) detailView.style.display = "none";
+  }
+
+  function bindButtons() {
+    const clientButtons = Array.from(document.querySelectorAll("button")).filter(function(btn) {
+      return (btn.textContent || "").trim().toLowerCase() === "clienti";
+    });
+
+    clientButtons.forEach(function(btn) {
+      btn.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        showClientsPage();
+
+        if (typeof window.memoLoadClientsV2 === "function") {
+          window.memoLoadClientsV2();
+        }
+      };
+    });
+
+    const backBtn = document.getElementById("memoBackDashboardBtn");
+    if (backBtn) {
+      backBtn.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        showCalendarHome();
+      };
+    }
+
+    const todayButtons = Array.from(document.querySelectorAll("button")).filter(function(btn) {
+      const text = (btn.textContent || "").trim().toLowerCase();
+      return text === "oggi" || text === "today";
+    });
+
+    todayButtons.forEach(function(btn) {
+      const oldClick = btn.onclick;
+      btn.onclick = function(e) {
+        showCalendarHome();
+        if (typeof oldClick === "function") {
+          try { oldClick.call(btn, e); } catch(err) {}
+        }
+      };
+    });
+  }
+
+  bindButtons();
+  setTimeout(bindButtons, 800);
+  setTimeout(bindButtons, 1800);
 });
 </script>
+
+
+<!-- MEMO GLASS CLIENT LOAD FIX -->
+<script>
+window.addEventListener("load", function(){
+
+  setTimeout(function(){
+
+    // expose loader globally if not already
+    if (typeof memoLoadClientsV2 === "function") {
+      window.memoLoadClientsV2 = memoLoadClientsV2;
+    }
+
+    const statusBox = document.getElementById("memoClientsStatusPage");
+
+    async function safeReloadClients() {
+
+      if(statusBox){
+        statusBox.textContent = "Caricamento clienti...";
+      }
+
+      try {
+
+        if (typeof window.memoLoadClientsV2 === "function") {
+          await window.memoLoadClientsV2(true);
+        }
+
+        // fallback render
+        const list = document.getElementById("memoClientsListPage");
+
+        if(list && list.children.length === 0){
+          if(statusBox){
+            statusBox.textContent = "Nessun cliente registrato.";
+          }
+        }
+
+      } catch(err){
+
+        console.error(err);
+
+        if(statusBox){
+          statusBox.textContent = "Errore caricamento clienti.";
+        }
+      }
+    }
+
+    // clients buttons
+    Array.from(document.querySelectorAll("button")).forEach(function(btn){
+
+      const text = (btn.textContent || "").trim().toLowerCase();
+
+      if(text === "clienti"){
+
+        btn.addEventListener("click", function(){
+
+          setTimeout(function(){
+            safeReloadClients();
+          }, 300);
+
+        });
+
+      }
+
+    });
+
+    // reload button
+    const reloadBtn = document.getElementById("memoReloadClientsBtn");
+    if(reloadBtn){
+      reloadBtn.onclick = function(){
+        safeReloadClients();
+      };
+    }
+
+    // initial preload
+    safeReloadClients();
+
+  }, 1200);
+
+});
+</script>
+
+
+<!-- MEMO GLASS CLIENT SAVE FIX -->
+<script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  addDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const memoFixFirebaseConfig = {
+  apiKey: "AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",
+  authDomain: "memoglass-83f62.firebaseapp.com",
+  projectId: "memoglass-83f62",
+  storageBucket: "memoglass-83f62.firebasestorage.app",
+  messagingSenderId: "776874023547",
+  appId: "1:776874023547:web:0436e0b26cf1221578a0de",
+  measurementId: "G-J628CF7XBE"
+};
+
+const memoFixApp = getApps().length ? getApp() : initializeApp(memoFixFirebaseConfig);
+const memoFixDb = getFirestore(memoFixApp);
+
+let memoFixEditingId = null;
+let memoFixClients = [];
+
+const f = (id) => document.getElementById(id);
+
+function getVal(id) {
+  const el = f(id);
+  return el ? String(el.value || "").trim() : "";
+}
+
+function setVal(id, value) {
+  const el = f(id);
+  if (el) el.value = value || "";
+}
+
+function esc(str) {
+  return String(str || "").replace(/[&<>"']/g, m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[m]));
+}
+
+function getClientData() {
+  const type = getVal("memoClientTypePage") || "privato";
+  const isCompany = type === "azienda";
+
+  const privateName = getVal("memoClientNamePage");
+  const companyName = getVal("memoCompanyNamePage");
+  const name = isCompany ? companyName : privateName;
+
+  return {
+    type,
+    name,
+    privateName,
+    companyName,
+    phone: getVal("memoClientPhonePage"),
+    email: getVal("memoClientEmailPage"),
+    plate: getVal("memoClientPlatePage").toUpperCase(),
+    car: getVal("memoClientCarPage"),
+    address: getVal("memoClientAddressPage"),
+    lat: getVal("memoClientLatPage"),
+    lon: getVal("memoClientLonPage"),
+    companyContact: getVal("memoCompanyContactPage"),
+    vatNumber: getVal("memoVatNumberPage"),
+    sdiCode: getVal("memoSdiCodePage").toUpperCase(),
+    pec: getVal("memoPecPage"),
+    notes: getVal("memoClientNotesPage"),
+    updatedAt: serverTimestamp()
+  };
+}
+
+function validateClient(data) {
+  if (!data.name) {
+    return data.type === "azienda" ? "Inserisci la ragione sociale." : "Inserisci nome e cognome.";
+  }
+  if (!data.phone && !data.email) {
+    return "Inserisci almeno telefono o email.";
+  }
+  if (data.type === "azienda" && !data.vatNumber && !data.sdiCode && !data.pec) {
+    return "Per azienda inserisci almeno Partita IVA, Codice Univoco o PEC.";
+  }
+  return "";
+}
+
+function resetClientForm() {
+  memoFixEditingId = null;
+
+  [
+    "memoClientNamePage","memoCompanyNamePage","memoClientPhonePage","memoClientEmailPage",
+    "memoClientPlatePage","memoClientCarPage","memoClientAddressPage","memoClientLatPage",
+    "memoClientLonPage","memoCompanyContactPage","memoVatNumberPage","memoSdiCodePage",
+    "memoPecPage","memoClientNotesPage"
+  ].forEach(id => setVal(id, ""));
+
+  setVal("memoClientTypePage", "privato");
+
+  const companyBox = f("memoCompanyBoxPage");
+  const companyNameBox = f("memoCompanyNameBoxPage");
+  const privateNameBox = f("memoPrivateNameBoxPage");
+  if (companyBox) companyBox.style.display = "none";
+  if (companyNameBox) companyNameBox.style.display = "none";
+  if (privateNameBox) privateNameBox.style.display = "block";
+
+  const title = f("memoClientFormTitlePage");
+  const btn = f("memoSaveClientPageBtn");
+  if (title) title.textContent = "Nuovo cliente";
+  if (btn) btn.textContent = "Salva cliente";
+}
+
+async function loadClients() {
+  const status = f("memoClientsStatusPage");
+  const list = f("memoClientsListPage");
+
+  if (status) status.textContent = "Caricamento clienti...";
+  if (list) list.innerHTML = "";
+
+  try {
+    const snap = await getDocs(collection(memoFixDb, "clients"));
+    memoFixClients = [];
+    snap.forEach(d => memoFixClients.push({ id: d.id, ...d.data() }));
+    memoFixClients.sort((a,b) => String(a.name || "").localeCompare(String(b.name || "")));
+    renderClients();
+
+    if (status) {
+      status.textContent = memoFixClients.length
+        ? memoFixClients.length + " clienti trovati."
+        : "Nessun cliente registrato.";
+    }
+  } catch (e) {
+    if (status) status.textContent = "Errore caricamento clienti: " + (e.code || e.message);
+  }
+}
+
+function renderClients() {
+  const list = f("memoClientsListPage");
+  const status = f("memoClientsStatusPage");
+  if (!list) return;
+
+  const q = (getVal("memoClientSearchPage") || "").toLowerCase();
+  const filtered = memoFixClients.filter(c => {
+    const text = [
+      c.name, c.privateName, c.companyName, c.phone, c.email, c.plate, c.car,
+      c.address, c.companyContact, c.vatNumber, c.sdiCode, c.pec
+    ].join(" ").toLowerCase();
+    return !q || text.includes(q);
+  });
+
+  if (status) status.textContent = filtered.length ? filtered.length + " clienti trovati." : "Nessun cliente registrato.";
+  list.innerHTML = "";
+
+  filtered.forEach(c => {
+    const row = document.createElement("div");
+    row.className = "memo-client-row";
+    const typeLabel = c.type === "azienda" ? "Azienda" : "Privato";
+    row.innerHTML = `
+      <div>
+        <strong>${esc(c.name || "Cliente senza nome")}</strong>
+        <small>
+          ${esc(typeLabel)} | Tel: ${esc(c.phone || "-")} | Email: ${esc(c.email || "-")}<br>
+          Targa: ${esc(c.plate || "-")} | Auto: ${esc(c.car || "-")}<br>
+          Indirizzo: ${esc(c.address || "-")}
+        </small>
+      </div>
+      <div class="memo-client-row-actions">
+        <button type="button" class="btn btn-blue" data-fix-detail="${esc(c.id)}">Vedi anagrafica</button>
+        <button type="button" class="btn btn-gray" data-fix-edit="${esc(c.id)}">Modifica</button>
+        <button type="button" class="btn btn-red" data-fix-delete="${esc(c.id)}">Elimina</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+
+  list.querySelectorAll("[data-fix-detail]").forEach(btn => btn.onclick = () => showDetail(btn.dataset.fixDetail));
+  list.querySelectorAll("[data-fix-edit]").forEach(btn => btn.onclick = () => editClient(btn.dataset.fixEdit));
+  list.querySelectorAll("[data-fix-delete]").forEach(btn => btn.onclick = () => deleteClient(btn.dataset.fixDelete));
+}
+
+function showView(view) {
+  const list = f("memoClientListView");
+  const form = f("memoClientFormView");
+  const detail = f("memoClientDetailView");
+
+  if (list) list.style.display = view === "list" ? "block" : "none";
+  if (form) form.style.display = view === "form" ? "block" : "none";
+  if (detail) detail.style.display = view === "detail" ? "block" : "none";
+}
+
+function showDetail(id) {
+  const c = memoFixClients.find(x => x.id === id);
+  if (!c) return;
+
+  window.memoCurrentDetailClientIdV2 = id;
+  const box = f("memoClientDetailBox");
+  if (!box) return;
+
+  const field = (label, value, full=false) => `
+    <div class="memo-detail-field ${full ? "full" : ""}">
+      <span>${esc(label)}</span>
+      <strong>${esc(value || "-")}</strong>
+    </div>
+  `;
+
+  box.innerHTML = `
+    ${field("Tipo cliente", c.type === "azienda" ? "Azienda" : "Privato")}
+    ${field(c.type === "azienda" ? "Ragione sociale" : "Nome e cognome", c.name)}
+    ${field("Telefono", c.phone)}
+    ${field("Email", c.email)}
+    ${field("Targa", c.plate)}
+    ${field("Auto", c.car)}
+    ${field("Indirizzo", c.address, true)}
+    ${field("Referente azienda", c.companyContact)}
+    ${field("Partita IVA", c.vatNumber)}
+    ${field("Codice Univoco", c.sdiCode)}
+    ${field("PEC", c.pec)}
+    ${field("Note", c.notes, true)}
+  `;
+
+  const editBtn = f("memoEditClientFromDetailBtn");
+  const delBtn = f("memoDeleteClientDetailBtn");
+  if (editBtn) editBtn.onclick = () => editClient(id);
+  if (delBtn) delBtn.onclick = () => deleteClient(id);
+
+  showView("detail");
+}
+
+function editClient(id) {
+  const c = memoFixClients.find(x => x.id === id);
+  if (!c) return;
+
+  memoFixEditingId = id;
+
+  setVal("memoClientTypePage", c.type || "privato");
+  const isCompany = (c.type || "privato") === "azienda";
+
+  const companyBox = f("memoCompanyBoxPage");
+  const companyNameBox = f("memoCompanyNameBoxPage");
+  const privateNameBox = f("memoPrivateNameBoxPage");
+  if (companyBox) companyBox.style.display = isCompany ? "block" : "none";
+  if (companyNameBox) companyNameBox.style.display = isCompany ? "block" : "none";
+  if (privateNameBox) privateNameBox.style.display = isCompany ? "none" : "block";
+
+  setVal("memoClientNamePage", c.privateName || (!isCompany ? c.name : ""));
+  setVal("memoCompanyNamePage", c.companyName || (isCompany ? c.name : ""));
+  setVal("memoClientPhonePage", c.phone);
+  setVal("memoClientEmailPage", c.email);
+  setVal("memoClientPlatePage", c.plate);
+  setVal("memoClientCarPage", c.car);
+  setVal("memoClientAddressPage", c.address);
+  setVal("memoClientLatPage", c.lat);
+  setVal("memoClientLonPage", c.lon);
+  setVal("memoCompanyContactPage", c.companyContact);
+  setVal("memoVatNumberPage", c.vatNumber);
+  setVal("memoSdiCodePage", c.sdiCode);
+  setVal("memoPecPage", c.pec);
+  setVal("memoClientNotesPage", c.notes);
+
+  const title = f("memoClientFormTitlePage");
+  const btn = f("memoSaveClientPageBtn");
+  if (title) title.textContent = "Modifica anagrafica";
+  if (btn) btn.textContent = "Salva modifiche";
+
+  showView("form");
+}
+
+async function deleteClient(id) {
+  if (!id) return;
+  if (!confirm("Vuoi eliminare questo cliente?")) return;
+
+  try {
+    await deleteDoc(doc(memoFixDb, "clients", id));
+    await loadClients();
+    showView("list");
+  } catch (e) {
+    alert("Errore eliminazione cliente: " + (e.code || e.message));
+  }
+}
+
+async function saveClient() {
+  const btn = f("memoSaveClientPageBtn");
+  const data = getClientData();
+  const validation = validateClient(data);
+
+  if (validation) {
+    alert(validation);
+    return;
+  }
+
+  try {
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Salvataggio...";
+    }
+
+    if (memoFixEditingId) {
+      await updateDoc(doc(memoFixDb, "clients", memoFixEditingId), data);
+    } else {
+      const created = await addDoc(collection(memoFixDb, "clients"), {
+        ...data,
+        createdAt: serverTimestamp()
+      });
+      memoFixEditingId = created.id;
+    }
+
+    await loadClients();
+    const savedId = memoFixEditingId;
+    resetClientForm();
+    showDetail(savedId);
+  } catch (e) {
+    alert("Errore salvataggio cliente: " + (e.code || e.message));
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = memoFixEditingId ? "Salva modifiche" : "Salva cliente";
+    }
+  }
+}
+
+window.addEventListener("load", () => {
+  const saveBtn = f("memoSaveClientPageBtn");
+  const resetBtn = f("memoResetClientPageBtn");
+  const search = f("memoClientSearchPage");
+  const type = f("memoClientTypePage");
+  const reload = f("memoReloadClientsBtn");
+  const newBtn = f("memoNewClientPageBtn");
+
+  if (saveBtn) saveBtn.onclick = saveClient;
+  if (resetBtn) resetBtn.onclick = resetClientForm;
+  if (search) search.oninput = renderClients;
+  if (reload) reload.onclick = loadClients;
+
+  if (newBtn) {
+    newBtn.onclick = () => {
+      resetClientForm();
+      showView("form");
+    };
+  }
+
+  if (type) {
+    type.onchange = () => {
+      const isCompany = type.value === "azienda";
+      const companyBox = f("memoCompanyBoxPage");
+      const companyNameBox = f("memoCompanyNameBoxPage");
+      const privateNameBox = f("memoPrivateNameBoxPage");
+      if (companyBox) companyBox.style.display = isCompany ? "block" : "none";
+      if (companyNameBox) companyNameBox.style.display = isCompany ? "block" : "none";
+      if (privateNameBox) privateNameBox.style.display = isCompany ? "none" : "block";
+    };
+  }
+
+  // expose for other patches/buttons
+  window.memoLoadClientsV2 = loadClients;
+  window.memoRenderClientsV2 = renderClients;
+  window.memoSaveClientFixed = saveClient;
+
+  setTimeout(loadClients, 500);
+});
+</script>
+
+
+<style>
+.memo-appointment-client-picker {
+    position: absolute;
+    z-index: 999999;
+    background: #ffffff;
+    border: 1px solid #d7dee8;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.16);
+    max-height: 260px;
+    overflow-y: auto;
+    display: none;
+}
+.memo-appointment-client-option {
+    padding: 11px 12px;
+    border-bottom: 1px solid #eef2f7;
+    cursor: pointer;
+    font-family: Inter, Arial, sans-serif;
+}
+.memo-appointment-client-option:hover {
+    background: #eef6ff;
+}
+.memo-appointment-client-option strong {
+    display: block;
+    color: #1e293b;
+    font-size: 0.9rem;
+}
+.memo-appointment-client-option small {
+    color: #64748b;
+    font-size: 0.74rem;
+    line-height: 1.35;
+}
+.memo-appointment-client-empty {
+    padding: 11px 12px;
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+</style>
+
+<!-- MEMO GLASS APPOINTMENT CLIENT PICKER -->
+<script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const memoPickerFirebaseConfig = {
+  apiKey: "AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",
+  authDomain: "memoglass-83f62.firebaseapp.com",
+  projectId: "memoglass-83f62",
+  storageBucket: "memoglass-83f62.firebasestorage.app",
+  messagingSenderId: "776874023547",
+  appId: "1:776874023547:web:0436e0b26cf1221578a0de",
+  measurementId: "G-J628CF7XBE"
+};
+
+const memoPickerApp = getApps().length ? getApp() : initializeApp(memoPickerFirebaseConfig);
+const memoPickerDb = getFirestore(memoPickerApp);
+
+let memoPickerClients = [];
+let memoPickerLoaded = false;
+let memoPickerBox = null;
+
+const mp = (id) => document.getElementById(id);
+
+function memoPickerEsc(str) {
+  return String(str || "").replace(/[&<>"']/g, m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[m]));
+}
+
+async function memoPickerLoadClients() {
+  try {
+    const snap = await getDocs(collection(memoPickerDb, "clients"));
+    memoPickerClients = [];
+    snap.forEach(d => memoPickerClients.push({ id: d.id, ...d.data() }));
+    memoPickerClients.sort((a,b) => String(a.name || "").localeCompare(String(b.name || "")));
+    memoPickerLoaded = true;
+  } catch(e) {
+    console.error("Errore caricamento clienti appuntamento:", e);
+    memoPickerLoaded = true;
+  }
+}
+
+function memoPickerEnsureBox() {
+  if (memoPickerBox) return memoPickerBox;
+
+  memoPickerBox = document.createElement("div");
+  memoPickerBox.id = "memoAppointmentClientPicker";
+  memoPickerBox.className = "memo-appointment-client-picker";
+  document.body.appendChild(memoPickerBox);
+
+  return memoPickerBox;
+}
+
+function memoPickerPosition(input) {
+  const box = memoPickerEnsureBox();
+  const rect = input.getBoundingClientRect();
+
+  box.style.left = (rect.left + window.scrollX) + "px";
+  box.style.top = (rect.bottom + window.scrollY + 6) + "px";
+  box.style.width = rect.width + "px";
+}
+
+function memoPickerFindNomeInput() {
+  return document.getElementById("nome") ||
+         document.querySelector("input[name='nome']") ||
+         Array.from(document.querySelectorAll("input")).find(i => {
+           const ph = (i.placeholder || "").toLowerCase();
+           const id = (i.id || "").toLowerCase();
+           return id.includes("nome") || ph.includes("nome") || ph.includes("cognome");
+         });
+}
+
+function memoPickerRender(input) {
+  const box = memoPickerEnsureBox();
+  memoPickerPosition(input);
+
+  const q = String(input.value || "").toLowerCase().trim();
+
+  if (q.length < 2) {
+    memoPickerHide();
+    return;
+  }
+
+  const filtered = memoPickerClients.filter(c => {
+    const text = [
+      c.name, c.privateName, c.companyName, c.companyContact,
+      c.phone, c.email, c.plate, c.car, c.address, c.vatNumber
+    ].join(" ").toLowerCase();
+    return !q || text.includes(q);
+  }).slice(0, 12);
+
+  if (!filtered.length) {
+    box.innerHTML = `<div class="memo-appointment-client-empty">Nessun cliente trovato. Puoi scrivere un nuovo nominativo.</div>`;
+    box.style.display = "block";
+    return;
+  }
+
+  box.innerHTML = "";
+
+  filtered.forEach(c => {
+    const option = document.createElement("div");
+    option.className = "memo-appointment-client-option";
+
+    const displayName = c.type === "azienda"
+      ? (c.companyContact ? `${c.companyContact} - ${c.companyName || c.name}` : (c.companyName || c.name))
+      : (c.name || "");
+
+    option.innerHTML = `
+      <strong>${memoPickerEsc(displayName || c.name || "Cliente")}</strong>
+      <small>
+        ${memoPickerEsc(c.type === "azienda" ? "Azienda" : "Privato")}
+        ${c.phone ? " | Tel: " + memoPickerEsc(c.phone) : ""}
+        ${c.plate ? " | Targa: " + memoPickerEsc(c.plate) : ""}
+        ${c.car ? " | Auto: " + memoPickerEsc(c.car) : ""}
+      </small>
+    `;
+
+    option.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      memoPickerUseClient(c);
+      memoPickerHide();
+    });
+
+    box.appendChild(option);
+  });
+
+  box.style.display = "block";
+}
+
+function memoPickerHide() {
+  if (memoPickerBox) memoPickerBox.style.display = "none";
+}
+
+function memoPickerSet(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  el.value = value || "";
+  el.dispatchEvent(new Event("input", { bubbles: true }));
+  el.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+function memoPickerUseClient(c) {
+  const displayName = c.type === "azienda"
+    ? (c.companyContact ? `${c.companyContact} - ${c.companyName || c.name}` : (c.companyName || c.name))
+    : (c.name || "");
+
+  memoPickerSet("nome", displayName);
+  memoPickerSet("cell", c.phone || "");
+  memoPickerSet("targa", c.plate || "");
+  memoPickerSet("auto", c.car || "");
+  memoPickerSet("posizione", c.address || "");
+  memoPickerSet("presso", c.type === "azienda" ? (c.companyName || c.name || "Azienda") : (c.name || "Cliente"));
+
+  const tipoCliente = document.getElementById("tipoCliente");
+  if (tipoCliente) {
+    const wanted = c.type === "azienda" ? "Azienda" : "Privato";
+    Array.from(tipoCliente.options).forEach(opt => {
+      if (
+        opt.value.toLowerCase() === wanted.toLowerCase() ||
+        opt.textContent.toLowerCase() === wanted.toLowerCase()
+      ) {
+        tipoCliente.value = opt.value;
+      }
+    });
+    tipoCliente.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  // Servizio Mobile non viene attivato automaticamente quando selezioni un cliente.
+}
+
+function memoPickerBindInput() {
+  const input = memoPickerFindNomeInput();
+  if (!input || input.dataset.memoClientPickerBound === "1") return;
+
+  input.dataset.memoClientPickerBound = "1";
+  input.setAttribute("autocomplete", "off");
+
+  input.addEventListener("focus", async () => {
+    if (!memoPickerLoaded) await memoPickerLoadClients();
+    const q = String(input.value || "").trim();
+    if (q.length >= 2) {
+      memoPickerRender(input);
+    } else {
+      memoPickerHide();
+    }
+  });
+
+  input.addEventListener("input", async () => {
+    if (!memoPickerLoaded) await memoPickerLoadClients();
+    const q = String(input.value || "").trim();
+    if (q.length >= 2) {
+      memoPickerRender(input);
+    } else {
+      memoPickerHide();
+    }
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") memoPickerHide();
+  });
+
+  window.addEventListener("resize", () => {
+    if (memoPickerBox && memoPickerBox.style.display === "block") {
+      memoPickerPosition(input);
+    }
+  });
+}
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest("#memoAppointmentClientPicker") && e.target !== memoPickerFindNomeInput()) {
+    memoPickerHide();
+  }
+});
+
+window.addEventListener("load", () => {
+  memoPickerLoadClients();
+  memoPickerBindInput();
+
+  // Il popup nuovo appuntamento viene creato/aperto dinamicamente: ricontrollo più volte.
+  setInterval(memoPickerBindInput, 1000);
+});
+
+window.memoReloadAppointmentClientPicker = async function() {
+  memoPickerLoaded = false;
+  await memoPickerLoadClients();
+};
+</script>
+
+
+<!-- MEMO SETTINGS BUTTON ORDER FIX -->
+<script>
+window.addEventListener("load", function(){
+
+  function reorderSettingsButton() {
+    const topActions = document.querySelector(".top-actions") || document.querySelector(".topbar");
+    if (!topActions) return;
+
+    const logoutBtn =
+      document.getElementById("memo-logout") ||
+      Array.from(topActions.querySelectorAll("button")).find(b =>
+        (b.textContent || "").trim().toLowerCase().includes("esci")
+      );
+
+    const settingsBtn =
+      document.querySelector(".settings-gear") ||
+      Array.from(topActions.querySelectorAll("button")).find(b => {
+        const t = (b.textContent || "").trim().toLowerCase();
+        return t.includes("impostazioni") || t.includes("settings");
+      });
+
+    if (logoutBtn && settingsBtn) {
+      topActions.insertBefore(settingsBtn, logoutBtn);
+    }
+  }
+
+  reorderSettingsButton();
+  setTimeout(reorderSettingsButton, 500);
+  setTimeout(reorderSettingsButton, 1500);
+
+});
+</script>
+
+
+<!-- MEMO SUPER ADMIN CREATE USER -->
+<style>
+.memo-create-user-box{
+    background:#f8fafc;
+    border:1px solid #dbe4ee;
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:18px;
+}
+.memo-create-user-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:10px;
+}
+.memo-create-user-grid input,
+.memo-create-user-grid select{
+    width:100%;
+    border:1px solid #d7dee8;
+    border-radius:10px;
+    padding:11px;
+    font-size:.92rem;
+    box-sizing:border-box;
+}
+.memo-create-user-grid .full{
+    grid-column:1 / -1;
+}
+.memo-create-user-perms{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:8px;
+}
+.memo-create-user-perms label{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:.82rem;
+    font-weight:800;
+}
+@media(max-width:800px){
+    .memo-create-user-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const memoCreateUserFirebaseConfig = {
+  apiKey: "AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",
+  authDomain: "memoglass-83f62.firebaseapp.com",
+  projectId: "memoglass-83f62",
+  storageBucket: "memoglass-83f62.firebasestorage.app",
+  messagingSenderId: "776874023547",
+  appId: "1:776874023547:web:0436e0b26cf1221578a0de",
+  measurementId: "G-J628CF7XBE"
+};
+
+const memoCreateUserApp = getApps().length ? getApp() : initializeApp(memoCreateUserFirebaseConfig);
+const memoCreateUserAuth = getAuth(memoCreateUserApp);
+const memoCreateUserDb = getFirestore(memoCreateUserApp);
+
+function memoInjectCreateUserPanel() {
+
+  const usersBody = document.querySelector(".memo-users-body");
+  if (!usersBody) return;
+
+  if (document.getElementById("memoCreateUserPanel")) return;
+
+  const panel = document.createElement("div");
+  panel.id = "memoCreateUserPanel";
+  panel.className = "memo-create-user-box";
+
+  panel.innerHTML = `
+    <h3 style="margin:0 0 14px;color:#334155;">Crea nuovo utente</h3>
+
+    <div class="memo-create-user-grid">
+
+      <div>
+        <label style="display:block;font-size:.72rem;font-weight:900;color:#64748b;margin-bottom:6px;">Email</label>
+        <input type="email" id="memoNewUserEmail" placeholder="utente@email.it">
+      </div>
+
+      <div>
+        <label style="display:block;font-size:.72rem;font-weight:900;color:#64748b;margin-bottom:6px;">Password</label>
+        <input type="password" id="memoNewUserPassword" placeholder="Minimo 6 caratteri">
+      </div>
+
+      <div>
+        <label style="display:block;font-size:.72rem;font-weight:900;color:#64748b;margin-bottom:6px;">Ruolo</label>
+        <select id="memoNewUserRole">
+          <option value="user">Utente</option>
+          <option value="admin">Admin</option>
+          <option value="super_admin">Super Admin</option>
+        </select>
+      </div>
+
+      <div class="full">
+        <div class="memo-create-user-perms">
+          <label><input type="checkbox" id="memoPermCalendar" checked> Calendario</label>
+          <label><input type="checkbox" id="memoPermSettings"> Impostazioni</label>
+          <label><input type="checkbox" id="memoPermUsers"> Gestione utenti</label>
+          <label><input type="checkbox" id="memoPermDeleteUsers"> Eliminare utenti</label>
+        </div>
+      </div>
+
+      <div class="full" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button type="button" class="btn btn-blue" id="memoCreateUserBtn">Crea utente</button>
+        <div id="memoCreateUserStatus" style="font-weight:800;color:#64748b;"></div>
+      </div>
+
+    </div>
+  `;
+
+  usersBody.prepend(panel);
+
+  const btn = document.getElementById("memoCreateUserBtn");
+
+  btn.onclick = async function(){
+
+    const email = String(document.getElementById("memoNewUserEmail").value || "").trim();
+    const password = String(document.getElementById("memoNewUserPassword").value || "");
+    const role = String(document.getElementById("memoNewUserRole").value || "user");
+
+    const status = document.getElementById("memoCreateUserStatus");
+
+    if (!email) {
+      status.textContent = "Inserisci email.";
+      return;
+    }
+
+    if (password.length < 6) {
+      status.textContent = "Password minimo 6 caratteri.";
+      return;
+    }
+
+    const permissions = {
+      calendar: document.getElementById("memoPermCalendar").checked,
+      settings: document.getElementById("memoPermSettings").checked,
+      users: document.getElementById("memoPermUsers").checked,
+      deleteUsers: document.getElementById("memoPermDeleteUsers").checked
+    };
+
+    try {
+
+      btn.disabled = true;
+      status.textContent = "Creazione utente in corso...";
+
+      const currentUser = memoCreateUserAuth.currentUser;
+
+      const cred = await createUserWithEmailAndPassword(
+        memoCreateUserAuth,
+        email,
+        password
+      );
+
+      await setDoc(doc(memoCreateUserDb, "users", cred.user.uid), {
+        uid: cred.user.uid,
+        email,
+        role,
+        permissions,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+
+      status.textContent = "Utente creato correttamente.";
+
+      document.getElementById("memoNewUserEmail").value = "";
+      document.getElementById("memoNewUserPassword").value = "";
+      document.getElementById("memoNewUserRole").value = "user";
+
+      // IMPORTANT:
+      // Firebase auto-logga il nuovo utente.
+      // Ricarichiamo la sessione attuale.
+      if (currentUser) {
+        await signOut(memoCreateUserAuth);
+        location.reload();
+      }
+
+    } catch(err) {
+
+      console.error(err);
+
+      const map = {
+        "auth/email-already-in-use":"Email già registrata.",
+        "auth/invalid-email":"Email non valida.",
+        "auth/weak-password":"Password troppo debole."
+      };
+
+      status.textContent = map[err.code] || ("Errore: " + (err.code || err.message));
+
+    } finally {
+      btn.disabled = false;
+    }
+
+  };
+
+}
+
+window.addEventListener("load", function(){
+
+  function waitUsersPanel(){
+    const body = document.querySelector(".memo-users-body");
+
+    if(body){
+      memoInjectCreateUserPanel();
+    } else {
+      setTimeout(waitUsersPanel, 1200);
+    }
+  }
+
+  waitUsersPanel();
+
+});
+</script>
+<!-- END MEMO SUPER ADMIN CREATE USER -->
+
+
+<!-- MEMO CLIENT APPOINTMENT REPORTS -->
+<style>
+.memo-client-report-box{
+    grid-column:1 / -1;
+    margin-top:8px;
+    background:#ffffff;
+    border:1px solid #e5e7eb;
+    border-radius:16px;
+    padding:14px;
+}
+.memo-client-report-head{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+}
+.memo-client-report-head h4{
+    margin:0;
+    color:#334155;
+}
+.memo-report-stats{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+.memo-report-pill{
+    border-radius:999px;
+    padding:7px 10px;
+    font-size:.76rem;
+    font-weight:900;
+    background:#eef6ff;
+    color:#007aff;
+}
+.memo-report-pill.done{
+    background:#ecfdf5;
+    color:#047857;
+}
+.memo-report-pill.todo{
+    background:#fff7ed;
+    color:#c2410c;
+}
+.memo-report-columns{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+.memo-report-column{
+    background:#f8fafc;
+    border:1px solid #eef2f7;
+    border-radius:14px;
+    padding:12px;
+}
+.memo-report-column h5{
+    margin:0 0 10px;
+    color:#334155;
+    font-size:.9rem;
+}
+.memo-report-item{
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-left:5px solid #007aff;
+    border-radius:12px;
+    padding:10px;
+    margin-bottom:8px;
+}
+.memo-report-item.done{
+    border-left-color:#10b981;
+}
+.memo-report-item.todo{
+    border-left-color:#f97316;
+}
+.memo-report-item strong{
+    display:block;
+    color:#1e293b;
+    margin-bottom:4px;
+}
+.memo-report-item small{
+    color:#64748b;
+    line-height:1.35;
+}
+.memo-report-empty{
+    color:#64748b;
+    font-size:.84rem;
+    font-weight:800;
+    background:#fff;
+    border:1px dashed #cbd5e1;
+    border-radius:12px;
+    padding:12px;
+}
+@media(max-width:850px){
+    .memo-report-columns{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<script>
+(function(){
+
+  function escMemoReport(str){
+    return String(str || "").replace(/[&<>"']/g, function(m){
+      return ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      })[m];
+    });
+  }
+
+  function normalizeMemoReport(str){
+    return String(str || "")
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]/g, "");
+  }
+
+  function parseMemoDate(dateValue){
+    if(!dateValue) return null;
+
+    if(dateValue instanceof Date && !isNaN(dateValue)) return dateValue;
+
+    const raw = String(dateValue);
+
+    // yyyy-mm-dd
+    let m = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+
+    // dd/mm/yyyy
+    m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if(m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+
+    const d = new Date(raw);
+    return isNaN(d) ? null : d;
+  }
+
+  function readLocalAppointments(){
+    const appointments = [];
+
+    Object.keys(localStorage).forEach(function(key){
+      let value = localStorage.getItem(key);
+      if(!value) return;
+
+      let parsed;
+      try { parsed = JSON.parse(value); } catch(e){ return; }
+
+      if(Array.isArray(parsed)){
+        parsed.forEach(function(item){
+          if(item && typeof item === "object"){
+            appointments.push({...item, __sourceKey:key});
+          }
+        });
+      } else if(parsed && typeof parsed === "object") {
+        // oggetto per date: { "2026-05-10": [..] }
+        Object.keys(parsed).forEach(function(k){
+          const v = parsed[k];
+          if(Array.isArray(v)){
+            v.forEach(function(item){
+              if(item && typeof item === "object"){
+                appointments.push({...item, date:item.date || item.data || item.day || k, __sourceKey:key});
+              }
+            });
+          }
+        });
+      }
+    });
+
+    // riduce duplicati banali
+    const seen = new Set();
+    return appointments.filter(function(a){
+      const id = [
+        a.id, a.date || a.data || a.day, a.ora || a.time, a.nome || a.name,
+        a.cell || a.phone, a.targa || a.plate
+      ].join("|");
+      if(seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+  }
+
+  function getAppointmentField(app, keys){
+    for(const k of keys){
+      if(app[k] !== undefined && app[k] !== null && String(app[k]).trim() !== "") return app[k];
+    }
+    return "";
+  }
+
+  function appointmentMatchesClient(app, client){
+    const appName = normalizeMemoReport(getAppointmentField(app, ["nome","name","cliente","client","customerName"]));
+    const appPhone = normalizeMemoReport(getAppointmentField(app, ["cell","telefono","phone","mobile"]));
+    const appPlate = normalizeMemoReport(getAppointmentField(app, ["targa","plate","licensePlate"]));
+    const appCompany = normalizeMemoReport(getAppointmentField(app, ["presso","azienda","company","ragioneSociale"]));
+
+    const cName = normalizeMemoReport(client.name);
+    const cPrivate = normalizeMemoReport(client.privateName);
+    const cCompany = normalizeMemoReport(client.companyName);
+    const cContact = normalizeMemoReport(client.companyContact);
+    const cPhone = normalizeMemoReport(client.phone);
+    const cPlate = normalizeMemoReport(client.plate);
+
+    if(cPhone && appPhone && cPhone === appPhone) return true;
+    if(cPlate && appPlate && cPlate === appPlate) return true;
+
+    if(cName && appName && (appName.includes(cName) || cName.includes(appName))) return true;
+    if(cPrivate && appName && (appName.includes(cPrivate) || cPrivate.includes(appName))) return true;
+    if(cCompany && (appName.includes(cCompany) || appCompany.includes(cCompany))) return true;
+    if(cContact && appName && appName.includes(cContact)) return true;
+
+    return false;
+  }
+
+  function isAppointmentDone(app){
+    const status = normalizeMemoReport(getAppointmentField(app, ["stato","status","esito"]));
+    const doneWords = ["fatto","completato","completata","concluso","conclusa","finito","finita","pagato","chiuso","chiusa"];
+    const cancelWords = ["annullato","annullata","cancellato","cancellata"];
+    if(doneWords.some(w => status.includes(w))) return true;
+    if(cancelWords.some(w => status.includes(w))) return true;
+
+    const dateValue = getAppointmentField(app, ["date","data","day","giorno"]);
+    const d = parseMemoDate(dateValue);
+    if(!d) return false;
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    d.setHours(0,0,0,0);
+
+    return d < today;
+  }
+
+  function sortAppointments(a,b){
+    const ad = parseMemoDate(getAppointmentField(a, ["date","data","day","giorno"])) || new Date(0);
+    const bd = parseMemoDate(getAppointmentField(b, ["date","data","day","giorno"])) || new Date(0);
+    return ad - bd;
+  }
+
+  function appointmentHtml(app, done){
+    const date = getAppointmentField(app, ["date","data","day","giorno"]) || "-";
+    const time = getAppointmentField(app, ["ora","time","orario"]) || "-";
+    const name = getAppointmentField(app, ["nome","name","cliente"]) || "Appuntamento";
+    const car = getAppointmentField(app, ["auto","car","veicolo"]) || "-";
+    const plate = getAppointmentField(app, ["targa","plate"]) || "-";
+    const service = getAppointmentField(app, ["lavoro","servizio","service","tipoLavoro"]) || "-";
+    const status = getAppointmentField(app, ["stato","status","esito"]) || (done ? "Già fatto" : "Da fare");
+
+    return `
+      <div class="memo-report-item ${done ? "done" : "todo"}">
+        <strong>${escMemoReport(date)} ${time !== "-" ? " - " + escMemoReport(time) : ""}</strong>
+        <small>
+          Cliente: ${escMemoReport(name)}<br>
+          Auto: ${escMemoReport(car)} | Targa: ${escMemoReport(plate)}<br>
+          Servizio: ${escMemoReport(service)} | Stato: ${escMemoReport(status)}
+        </small>
+      </div>
+    `;
+  }
+
+  function renderClientAppointmentReport(client){
+    const detailBox = document.getElementById("memoClientDetailBox");
+    if(!detailBox || !client) return;
+
+    const old = document.getElementById("memoClientAppointmentReport");
+    if(old) old.remove();
+
+    const all = readLocalAppointments().filter(app => appointmentMatchesClient(app, client));
+    const done = all.filter(isAppointmentDone).sort(sortAppointments).reverse();
+    const todo = all.filter(app => !isAppointmentDone(app)).sort(sortAppointments);
+
+    const report = document.createElement("div");
+    report.id = "memoClientAppointmentReport";
+    report.className = "memo-client-report-box";
+
+    report.innerHTML = `
+      <div class="memo-client-report-head">
+        <h4>Report appuntamenti calendario</h4>
+        <div class="memo-report-stats">
+          <span class="memo-report-pill">Totale: ${all.length}</span>
+          <span class="memo-report-pill todo">Da fare: ${todo.length}</span>
+          <span class="memo-report-pill done">Già fatti: ${done.length}</span>
+        </div>
+      </div>
+      <div class="memo-report-columns">
+        <div class="memo-report-column">
+          <h5>Da fare</h5>
+          ${
+            todo.length
+              ? todo.map(app => appointmentHtml(app, false)).join("")
+              : `<div class="memo-report-empty">Nessun appuntamento da fare collegato a questo cliente.</div>`
+          }
+        </div>
+        <div class="memo-report-column">
+          <h5>Già fatti</h5>
+          ${
+            done.length
+              ? done.map(app => appointmentHtml(app, true)).join("")
+              : `<div class="memo-report-empty">Nessun appuntamento già fatto collegato a questo cliente.</div>`
+          }
+        </div>
+      </div>
+    `;
+
+    detailBox.appendChild(report);
+  }
+
+  function findClientById(id){
+    if(Array.isArray(window.memoFixClients)){
+      const c = window.memoFixClients.find(x => x.id === id);
+      if(c) return c;
+    }
+    if(Array.isArray(window.memoClientsV2)){
+      const c = window.memoClientsV2.find(x => x.id === id);
+      if(c) return c;
+    }
+
+    // fallback: prendi dati dalla schermata anagrafica, se disponibili
+    return null;
+  }
+
+  function hookReportButtons(){
+    document.addEventListener("click", function(e){
+      const detailBtn = e.target.closest("[data-fix-detail], [data-detail-client-v2]");
+      if(!detailBtn) return;
+
+      const id = detailBtn.dataset.fixDetail || detailBtn.dataset.detailClientV2;
+
+      setTimeout(function(){
+        const client = findClientById(id);
+        if(client) renderClientAppointmentReport(client);
+      }, 250);
+
+      setTimeout(function(){
+        const client = findClientById(id);
+        if(client) renderClientAppointmentReport(client);
+      }, 900);
+    });
+
+    const editDetailBtn = document.getElementById("memoEditClientFromDetailBtn");
+    const useDetailBtn = document.getElementById("memoUseClientDetailBtn");
+
+    // quando la funzione showDetail viene chiamata da codice, osserviamo il box
+    const box = document.getElementById("memoClientDetailBox");
+    if(box){
+      const obs = new MutationObserver(function(){
+        const id = window.memoCurrentDetailClientIdV2;
+        const client = findClientById(id);
+        if(client) renderClientAppointmentReport(client);
+      });
+      obs.observe(box, { childList:true });
+    }
+  }
+
+  window.memoRenderClientAppointmentReport = renderClientAppointmentReport;
+  window.memoReadCalendarAppointmentsForClient = readLocalAppointments;
+
+  window.addEventListener("load", function(){
+    setTimeout(hookReportButtons, 800);
+  });
+
+})();
+</script>
+<!-- END MEMO CLIENT APPOINTMENT REPORTS -->
+
+
+<!-- MEMO CLIENT REPORT BOX ALWAYS VISIBLE -->
+<style>
+#memoClientReportsAlwaysBox{
+    grid-column: 1 / -1;
+    margin-top: 14px;
+    background: #ffffff;
+    border: 1px solid #dbe4ee;
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+}
+.memo-client-report-title-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+}
+.memo-client-report-title-row h4{
+    margin:0;
+    color:#334155;
+    font-size:1rem;
+}
+.memo-client-report-kpis{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+.memo-client-report-kpi{
+    border-radius:999px;
+    padding:7px 11px;
+    font-size:.76rem;
+    font-weight:900;
+    background:#eef6ff;
+    color:#007aff;
+}
+.memo-client-report-kpi.todo{
+    background:#fff7ed;
+    color:#c2410c;
+}
+.memo-client-report-kpi.done{
+    background:#ecfdf5;
+    color:#047857;
+}
+.memo-client-report-layout{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+.memo-client-report-section{
+    background:#f8fafc;
+    border:1px solid #eef2f7;
+    border-radius:15px;
+    padding:12px;
+}
+.memo-client-report-section h5{
+    margin:0 0 10px;
+    color:#334155;
+}
+.memo-client-report-card{
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-left:5px solid #007aff;
+    border-radius:13px;
+    padding:10px;
+    margin-bottom:8px;
+}
+.memo-client-report-card.todo{
+    border-left-color:#f97316;
+}
+.memo-client-report-card.done{
+    border-left-color:#10b981;
+}
+.memo-client-report-card strong{
+    display:block;
+    color:#1e293b;
+    margin-bottom:4px;
+}
+.memo-client-report-card small{
+    color:#64748b;
+    line-height:1.35;
+}
+.memo-client-report-empty{
+    background:#fff;
+    border:1px dashed #cbd5e1;
+    border-radius:13px;
+    padding:12px;
+    color:#64748b;
+    font-weight:800;
+    font-size:.84rem;
+}
+@media(max-width:850px){
+    .memo-client-report-layout{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<script>
+(function(){
+
+  function escReportAlways(str){
+    return String(str || "").replace(/[&<>"']/g, function(m){
+      return ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      })[m];
+    });
+  }
+
+  function normReportAlways(str){
+    return String(str || "")
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]/g, "");
+  }
+
+  function fieldReportAlways(obj, keys){
+    for(const k of keys){
+      if(obj && obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== ""){
+        return obj[k];
+      }
+    }
+    return "";
+  }
+
+  function readAppointmentsReportAlways(){
+    const result = [];
+
+    Object.keys(localStorage).forEach(function(key){
+      const value = localStorage.getItem(key);
+      if(!value) return;
+
+      let parsed;
+      try { parsed = JSON.parse(value); } catch(e){ return; }
+
+      if(Array.isArray(parsed)){
+        parsed.forEach(function(item){
+          if(item && typeof item === "object") result.push({...item, __key:key});
+        });
+      } else if(parsed && typeof parsed === "object"){
+        Object.keys(parsed).forEach(function(dateKey){
+          const arr = parsed[dateKey];
+          if(Array.isArray(arr)){
+            arr.forEach(function(item){
+              if(item && typeof item === "object"){
+                result.push({...item, date:item.date || item.data || item.giorno || dateKey, __key:key});
+              }
+            });
+          }
+        });
+      }
+    });
+
+    const seen = new Set();
+    return result.filter(function(a){
+      const marker = [
+        fieldReportAlways(a, ["id"]),
+        fieldReportAlways(a, ["date","data","giorno","day"]),
+        fieldReportAlways(a, ["ora","time","orario"]),
+        fieldReportAlways(a, ["nome","name","cliente"]),
+        fieldReportAlways(a, ["cell","telefono","phone"]),
+        fieldReportAlways(a, ["targa","plate"])
+      ].join("|");
+
+      if(seen.has(marker)) return false;
+      seen.add(marker);
+      return true;
+    });
+  }
+
+  function getCurrentClientFromDetail(){
+    const id = window.memoCurrentDetailClientIdV2;
+
+    if(id && Array.isArray(window.memoFixClients)){
+      const c = window.memoFixClients.find(x => x.id === id);
+      if(c) return c;
+    }
+
+    if(id && Array.isArray(window.memoClientsV2)){
+      const c = window.memoClientsV2.find(x => x.id === id);
+      if(c) return c;
+    }
+
+    // fallback leggendo i campi già visibili nella scheda anagrafica
+    const box = document.getElementById("memoClientDetailBox");
+    if(!box) return null;
+
+    const fields = Array.from(box.querySelectorAll(".memo-detail-field"));
+    const data = {};
+    fields.forEach(function(f){
+      const label = normReportAlways(f.querySelector("span")?.textContent || "");
+      const value = f.querySelector("strong")?.textContent || "";
+
+      if(label.includes("tipocliente")) data.type = value.toLowerCase().includes("azienda") ? "azienda" : "privato";
+      if(label.includes("nomeecognome") || label.includes("ragionesociale")) data.name = value;
+      if(label.includes("telefono")) data.phone = value;
+      if(label.includes("targa")) data.plate = value;
+      if(label.includes("auto")) data.car = value;
+      if(label.includes("indirizzo")) data.address = value;
+      if(label.includes("partitaiva")) data.vatNumber = value;
+      if(label.includes("codiceunivoco")) data.sdiCode = value;
+      if(label.includes("referenteazienda")) data.companyContact = value;
+    });
+
+    return data.name ? data : null;
+  }
+
+  function matchesClientReportAlways(app, client){
+    if(!client) return false;
+
+    const appName = normReportAlways(fieldReportAlways(app, ["nome","name","cliente","customerName"]));
+    const appPhone = normReportAlways(fieldReportAlways(app, ["cell","telefono","phone","mobile"]));
+    const appPlate = normReportAlways(fieldReportAlways(app, ["targa","plate","licensePlate"]));
+    const appCompany = normReportAlways(fieldReportAlways(app, ["presso","azienda","company","ragioneSociale"]));
+
+    const cName = normReportAlways(client.name);
+    const cPrivate = normReportAlways(client.privateName);
+    const cCompany = normReportAlways(client.companyName);
+    const cContact = normReportAlways(client.companyContact);
+    const cPhone = normReportAlways(client.phone);
+    const cPlate = normReportAlways(client.plate);
+
+    if(cPhone && appPhone && cPhone === appPhone) return true;
+    if(cPlate && appPlate && cPlate === appPlate) return true;
+
+    if(cName && appName && (appName.includes(cName) || cName.includes(appName))) return true;
+    if(cPrivate && appName && (appName.includes(cPrivate) || cPrivate.includes(appName))) return true;
+    if(cCompany && (appName.includes(cCompany) || appCompany.includes(cCompany))) return true;
+    if(cContact && appName && appName.includes(cContact)) return true;
+
+    return false;
+  }
+
+  function parseDateReportAlways(value){
+    if(!value) return null;
+    const raw = String(value);
+
+    let m = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(m) return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+
+    m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if(m) return new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
+
+    const d = new Date(raw);
+    return isNaN(d) ? null : d;
+  }
+
+  function isDoneReportAlways(app){
+    const status = normReportAlways(fieldReportAlways(app, ["stato","status","esito"]));
+    if(["fatto","completato","concluso","finito","pagato","chiuso"].some(w => status.includes(w))) return true;
+    if(["annullato","cancellato"].some(w => status.includes(w))) return true;
+
+    const d = parseDateReportAlways(fieldReportAlways(app, ["date","data","giorno","day"]));
+    if(!d) return false;
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    d.setHours(0,0,0,0);
+
+    return d < today;
+  }
+
+  function appointmentCardReportAlways(app, type){
+    const date = fieldReportAlways(app, ["date","data","giorno","day"]) || "-";
+    const time = fieldReportAlways(app, ["ora","time","orario"]) || "";
+    const service = fieldReportAlways(app, ["lavoro","servizio","service","tipoLavoro"]) || "-";
+    const car = fieldReportAlways(app, ["auto","car","veicolo"]) || "-";
+    const plate = fieldReportAlways(app, ["targa","plate"]) || "-";
+    const status = fieldReportAlways(app, ["stato","status","esito"]) || (type === "done" ? "Già fatto" : "Da fare");
+
+    return `
+      <div class="memo-client-report-card ${type}">
+        <strong>${escReportAlways(date)}${time ? " - " + escReportAlways(time) : ""}</strong>
+        <small>
+          Servizio: ${escReportAlways(service)}<br>
+          Auto: ${escReportAlways(car)} | Targa: ${escReportAlways(plate)}<br>
+          Stato: ${escReportAlways(status)}
+        </small>
+      </div>
+    `;
+  }
+
+  function renderAlwaysClientReport(){
+    const detailBox = document.getElementById("memoClientDetailBox");
+    if(!detailBox || detailBox.offsetParent === null) return;
+
+    const old = document.getElementById("memoClientReportsAlwaysBox");
+    if(old) old.remove();
+
+    const client = getCurrentClientFromDetail();
+
+    const allAppointments = readAppointmentsReportAlways();
+    const linked = client ? allAppointments.filter(app => matchesClientReportAlways(app, client)) : [];
+
+    const todo = linked.filter(app => !isDoneReportAlways(app));
+    const done = linked.filter(app => isDoneReportAlways(app));
+
+    todo.sort((a,b) => {
+      const ad = parseDateReportAlways(fieldReportAlways(a, ["date","data","giorno","day"])) || new Date(8640000000000000);
+      const bd = parseDateReportAlways(fieldReportAlways(b, ["date","data","giorno","day"])) || new Date(8640000000000000);
+      return ad - bd;
+    });
+
+    done.sort((a,b) => {
+      const ad = parseDateReportAlways(fieldReportAlways(a, ["date","data","giorno","day"])) || new Date(0);
+      const bd = parseDateReportAlways(fieldReportAlways(b, ["date","data","giorno","day"])) || new Date(0);
+      return bd - ad;
+    });
+
+    const box = document.createElement("div");
+    box.id = "memoClientReportsAlwaysBox";
+
+    box.innerHTML = `
+      <div class="memo-client-report-title-row">
+        <h4>Report appuntamenti cliente</h4>
+        <div class="memo-client-report-kpis">
+          <span class="memo-client-report-kpi">Totale: ${linked.length}</span>
+          <span class="memo-client-report-kpi todo">Da fare: ${todo.length}</span>
+          <span class="memo-client-report-kpi done">Già fatti: ${done.length}</span>
+        </div>
+      </div>
+
+      <div class="memo-client-report-layout">
+        <div class="memo-client-report-section">
+          <h5>Appuntamenti da fare</h5>
+          ${
+            todo.length
+              ? todo.map(app => appointmentCardReportAlways(app, "todo")).join("")
+              : `<div class="memo-client-report-empty">Nessun appuntamento da fare trovato per questo cliente.</div>`
+          }
+        </div>
+
+        <div class="memo-client-report-section">
+          <h5>Appuntamenti già fatti</h5>
+          ${
+            done.length
+              ? done.map(app => appointmentCardReportAlways(app, "done")).join("")
+              : `<div class="memo-client-report-empty">Nessun appuntamento già fatto trovato per questo cliente.</div>`
+          }
+        </div>
+      </div>
+    `;
+
+    detailBox.appendChild(box);
+  }
+
+  window.memoRenderAlwaysClientReport = renderAlwaysClientReport;
+
+  window.addEventListener("load", function(){
+    document.addEventListener("click", function(e){
+      if(e.target.closest("[data-fix-detail], [data-detail-client-v2], #memoEditClientFromDetailBtn, #memoUseClientDetailBtn")){
+        setTimeout(renderAlwaysClientReport, 250);
+        setTimeout(renderAlwaysClientReport, 900);
+      }
+    });
+
+    const detailBox = document.getElementById("memoClientDetailBox");
+    if(detailBox){
+      const obs = new MutationObserver(function(){
+        if(!document.getElementById("memoClientReportsAlwaysBox")){
+          setTimeout(renderAlwaysClientReport, 80);
+        }
+      });
+      obs.observe(detailBox, { childList:true, subtree:false });
+    }
+
+    setInterval(function(){
+      const detailView = document.getElementById("memoClientDetailView");
+      if(detailView && detailView.style.display !== "none"){
+        if(!document.getElementById("memoClientReportsAlwaysBox")){
+          renderAlwaysClientReport();
+        }
+      }
+    }, 1500);
+  });
+
+})();
+</script>
+<!-- END MEMO CLIENT REPORT BOX ALWAYS VISIBLE -->
 
 </body></html>
