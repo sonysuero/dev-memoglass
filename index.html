@@ -5507,11 +5507,29 @@ function downloadAppointmentPdf(index) {
         </div>
     </div>
 
-<!-- FIREBASE -->
+
+
+
+
+<!-- FIREBASE + LOGIN SUPER ADMIN -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  runTransaction,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",
@@ -5524,86 +5542,228 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth(app);
+try { getAnalytics(app); } catch(e) {}
 
-window.memoAuth = auth;
-window.memoFirebase = {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut
-};
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+function showAuthMessage(message, ok = false) {
+  const box = document.getElementById("memo-auth-status");
+  if (!box) return;
+  box.style.color = ok ? "#10b981" : "#ef4444";
+  box.innerText = message;
+}
+
+async function createUserProfileFirstUserIsSuperAdmin(user) {
+  const setupRef = doc(db, "system", "adminSetup");
+  const userRef = doc(db, "users", user.uid);
+
+  const role = await runTransaction(db, async (transaction) => {
+    const setupSnap = await transaction.get(setupRef);
+
+    if (!setupSnap.exists()) {
+      transaction.set(setupRef, {
+        superAdminUid: user.uid,
+        superAdminEmail: user.email,
+        createdAt: serverTimestamp()
+      });
+
+      transaction.set(userRef, {
+        uid: user.uid,
+        email: user.email,
+        role: "super_admin",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+
+      return "super_admin";
+    }
+
+    transaction.set(userRef, {
+      uid: user.uid,
+      email: user.email,
+      role: "user",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+
+    return "user";
+  });
+
+  return role;
+}
+
+async function getUserRole(user) {
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+  if (snap.exists()) {
+    return snap.data().role || "user";
+  }
+
+  await setDoc(userRef, {
+    uid: user.uid,
+    email: user.email,
+    role: "user",
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+
+  return "user";
+}
+
+function ensureLogoutButton() {
+  if (document.getElementById("memo-logout-btn")) return;
+
+  const topActions = document.querySelector(".top-actions") || document.querySelector(".topbar");
+  if (!topActions) return;
+
+  const btn = document.createElement("button");
+  btn.id = "memo-logout-btn";
+  btn.className = "btn btn-red";
+  btn.type = "button";
+  btn.innerText = "Esci";
+  btn.onclick = async () => {
+    await signOut(auth);
+    location.reload();
+  };
+
+  topActions.appendChild(btn);
+}
+
+function ensureAdminBadge(user, role) {
+  let badge = document.getElementById("memo-admin-badge");
+  if (!badge) {
+    badge = document.createElement("div");
+    badge.id = "memo-admin-badge";
+    badge.style.margin = "10px 24px 2px 36px";
+    badge.style.fontWeight = "900";
+    badge.style.color = "#007aff";
+    badge.style.fontFamily = "Inter, sans-serif";
+    const shell = document.querySelector(".app-shell");
+    if (shell) shell.prepend(badge);
+  }
+
+  badge.innerText = role === "super_admin"
+    ? `Accesso Super Admin: ${user.email}`
+    : `Accesso utente: ${user.email}`;
+}
+
+window.addEventListener("load", () => {
+  const loginBtn = document.getElementById("memo-login-btn");
+  const registerBtn = document.getElementById("memo-register-btn");
+  const loginScreen = document.getElementById("memo-login-screen");
+
+  registerBtn.onclick = async () => {
+    const email = document.getElementById("memo-email").value.trim();
+    const password = document.getElementById("memo-password").value;
+
+    if (!email || !password) {
+      showAuthMessage("Inserisci email e password.");
+      return;
+    }
+
+    if (password.length < 6) {
+      showAuthMessage("La password deve avere almeno 6 caratteri.");
+      return;
+    }
+
+    try {
+      registerBtn.disabled = true;
+      showAuthMessage("Registrazione in corso...", true);
+
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      const role = await createUserProfileFirstUserIsSuperAdmin(cred.user);
+
+      if (role === "super_admin") {
+        showAuthMessage("Prima registrazione completata: sei Super Admin.", true);
+      } else {
+        showAuthMessage("Registrazione completata. Account utente creato.", true);
+      }
+    } catch(e) {
+      showAuthMessage(traduciErroreFirebase(e.code || e.message));
+    } finally {
+      registerBtn.disabled = false;
+    }
+  };
+
+  loginBtn.onclick = async () => {
+    const email = document.getElementById("memo-email").value.trim();
+    const password = document.getElementById("memo-password").value;
+
+    if (!email || !password) {
+      showAuthMessage("Inserisci email e password.");
+      return;
+    }
+
+    try {
+      loginBtn.disabled = true;
+      showAuthMessage("Accesso in corso...", true);
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch(e) {
+      showAuthMessage(traduciErroreFirebase(e.code || e.message));
+    } finally {
+      loginBtn.disabled = false;
+    }
+  };
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const role = await getUserRole(user);
+      localStorage.setItem("memoGlassUserRole", role);
+      localStorage.setItem("memoGlassUserEmail", user.email || "");
+
+      if (loginScreen) loginScreen.style.display = "none";
+      ensureLogoutButton();
+      ensureAdminBadge(user, role);
+    } else {
+      localStorage.removeItem("memoGlassUserRole");
+      localStorage.removeItem("memoGlassUserEmail");
+      if (loginScreen) loginScreen.style.display = "flex";
+    }
+  });
+});
+
+function traduciErroreFirebase(code) {
+  const errori = {
+    "auth/email-already-in-use": "Questa email è già registrata. Usa Accedi.",
+    "auth/invalid-email": "Email non valida.",
+    "auth/weak-password": "Password troppo debole. Usa almeno 6 caratteri.",
+    "auth/user-not-found": "Utente non trovato. Prima registrati.",
+    "auth/wrong-password": "Password errata.",
+    "auth/invalid-credential": "Email o password non corretti.",
+    "auth/network-request-failed": "Errore di rete. Controlla la connessione.",
+    "permission-denied": "Permessi Firebase mancanti. Devi attivare Firestore Database."
+  };
+
+  return errori[code] || `Errore: ${code}`;
+}
 </script>
 
+<div id="memo-login-screen" style="position:fixed;inset:0;background:linear-gradient(135deg,#001b3a,#007aff);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Inter,sans-serif;">
+  <div style="width:100%;max-width:430px;background:white;border-radius:30px;padding:30px;box-shadow:0 30px 90px rgba(0,0,0,.45);">
+    <div style="text-align:center;margin-bottom:22px;">
+      <div style="width:76px;height:76px;margin:0 auto 14px;border-radius:22px;background:#eef6ff;display:flex;align-items:center;justify-content:center;color:#007aff;font-size:2rem;font-weight:900;">MG</div>
+      <h1 style="margin:0;font-size:2rem;color:#007aff;font-weight:900;letter-spacing:-1px;">Memo Glass</h1>
+      <p style="margin:8px 0 0;color:#64748b;font-size:.95rem;">Accedi o registra il primo Super Admin</p>
+    </div>
 
-<div id="memo-login-screen" style="position:fixed;inset:0;background:#0f172a;z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;">
-  <div style="width:100%;max-width:420px;background:white;border-radius:28px;padding:30px;box-shadow:0 25px 80px rgba(0,0,0,.45);font-family:Inter,sans-serif;">
-    <h1 style="margin:0 0 8px;font-size:2rem;color:#007aff;font-weight:900;">Memo Glass</h1>
-    <p style="margin:0 0 24px;color:#64748b;">Accedi o registrati per entrare nel gestionale.</p>
+    <label style="display:block;font-size:.72rem;font-weight:900;color:#64748b;text-transform:uppercase;margin-bottom:6px;">Email</label>
+    <input id="memo-email" type="email" placeholder="admin@memoglass.it" autocomplete="email" style="width:100%;padding:15px;border-radius:15px;border:1px solid #dbe4ee;margin-bottom:13px;font-size:16px;">
 
-    <input id="memo-email" type="email" placeholder="Email" style="width:100%;padding:14px;border-radius:14px;border:1px solid #dbe4ee;margin-bottom:12px;font-size:16px;">
-    <input id="memo-password" type="password" placeholder="Password" style="width:100%;padding:14px;border-radius:14px;border:1px solid #dbe4ee;margin-bottom:18px;font-size:16px;">
+    <label style="display:block;font-size:.72rem;font-weight:900;color:#64748b;text-transform:uppercase;margin-bottom:6px;">Password</label>
+    <input id="memo-password" type="password" placeholder="Minimo 6 caratteri" autocomplete="current-password" style="width:100%;padding:15px;border-radius:15px;border:1px solid #dbe4ee;margin-bottom:18px;font-size:16px;">
 
-    <button id="memo-login-btn" style="width:100%;padding:14px;border:none;border-radius:14px;background:#007aff;color:white;font-weight:900;font-size:16px;margin-bottom:10px;cursor:pointer;">Accedi</button>
+    <button id="memo-login-btn" type="button" style="width:100%;padding:15px;border:none;border-radius:15px;background:#007aff;color:white;font-weight:900;font-size:16px;margin-bottom:10px;cursor:pointer;">Accedi</button>
 
-    <button id="memo-register-btn" style="width:100%;padding:14px;border:none;border-radius:14px;background:#10b981;color:white;font-weight:900;font-size:16px;cursor:pointer;">Registrati</button>
+    <button id="memo-register-btn" type="button" style="width:100%;padding:15px;border:none;border-radius:15px;background:#10b981;color:white;font-weight:900;font-size:16px;cursor:pointer;">Prima registrazione / Registrati</button>
 
-    <div id="memo-auth-status" style="margin-top:14px;font-size:.9rem;color:#ef4444;font-weight:700;"></div>
+    <div id="memo-auth-status" style="margin-top:15px;font-size:.9rem;color:#ef4444;font-weight:800;line-height:1.35;text-align:center;"></div>
+
+    <div style="margin-top:18px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:15px;padding:12px;color:#64748b;font-size:.8rem;line-height:1.45;">
+      La prima email registrata diventa automaticamente <b>Super Admin</b>. Gli account successivi vengono creati come utenti normali.
+    </div>
   </div>
 </div>
-
-<script type="module">
-window.addEventListener("load", () => {
-  const waitFirebase = setInterval(() => {
-    if(window.memoAuth && window.memoFirebase){
-      clearInterval(waitFirebase);
-
-      const auth = window.memoAuth;
-      const {
-        createUserWithEmailAndPassword,
-        signInWithEmailAndPassword,
-        onAuthStateChanged
-      } = window.memoFirebase;
-
-      const loginScreen = document.getElementById("memo-login-screen");
-      const status = document.getElementById("memo-auth-status");
-
-      document.getElementById("memo-register-btn").onclick = async () => {
-        const email = document.getElementById("memo-email").value;
-        const password = document.getElementById("memo-password").value;
-
-        try {
-          await createUserWithEmailAndPassword(auth, email, password);
-          status.style.color = "#10b981";
-          status.innerText = "Registrazione completata.";
-        } catch(e){
-          status.innerText = e.message;
-        }
-      };
-
-      document.getElementById("memo-login-btn").onclick = async () => {
-        const email = document.getElementById("memo-email").value;
-        const password = document.getElementById("memo-password").value;
-
-        try {
-          await signInWithEmailAndPassword(auth, email, password);
-        } catch(e){
-          status.innerText = e.message;
-        }
-      };
-
-      onAuthStateChanged(auth, (user) => {
-        if(user){
-          loginScreen.style.display = "none";
-        } else {
-          loginScreen.style.display = "flex";
-        }
-      });
-    }
-  }, 300);
-});
-</script>
 
 </body>
 </html>`;
@@ -6014,11 +6174,29 @@ Tel ..."></textarea>
 
 
 
-<!-- FIREBASE -->
+
+
+
+
+<!-- FIREBASE + LOGIN SUPER ADMIN -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  runTransaction,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",
@@ -6031,85 +6209,227 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth(app);
+try { getAnalytics(app); } catch(e) {}
 
-window.memoAuth = auth;
-window.memoFirebase = {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut
-};
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+function showAuthMessage(message, ok = false) {
+  const box = document.getElementById("memo-auth-status");
+  if (!box) return;
+  box.style.color = ok ? "#10b981" : "#ef4444";
+  box.innerText = message;
+}
+
+async function createUserProfileFirstUserIsSuperAdmin(user) {
+  const setupRef = doc(db, "system", "adminSetup");
+  const userRef = doc(db, "users", user.uid);
+
+  const role = await runTransaction(db, async (transaction) => {
+    const setupSnap = await transaction.get(setupRef);
+
+    if (!setupSnap.exists()) {
+      transaction.set(setupRef, {
+        superAdminUid: user.uid,
+        superAdminEmail: user.email,
+        createdAt: serverTimestamp()
+      });
+
+      transaction.set(userRef, {
+        uid: user.uid,
+        email: user.email,
+        role: "super_admin",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+
+      return "super_admin";
+    }
+
+    transaction.set(userRef, {
+      uid: user.uid,
+      email: user.email,
+      role: "user",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+
+    return "user";
+  });
+
+  return role;
+}
+
+async function getUserRole(user) {
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+  if (snap.exists()) {
+    return snap.data().role || "user";
+  }
+
+  await setDoc(userRef, {
+    uid: user.uid,
+    email: user.email,
+    role: "user",
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+
+  return "user";
+}
+
+function ensureLogoutButton() {
+  if (document.getElementById("memo-logout-btn")) return;
+
+  const topActions = document.querySelector(".top-actions") || document.querySelector(".topbar");
+  if (!topActions) return;
+
+  const btn = document.createElement("button");
+  btn.id = "memo-logout-btn";
+  btn.className = "btn btn-red";
+  btn.type = "button";
+  btn.innerText = "Esci";
+  btn.onclick = async () => {
+    await signOut(auth);
+    location.reload();
+  };
+
+  topActions.appendChild(btn);
+}
+
+function ensureAdminBadge(user, role) {
+  let badge = document.getElementById("memo-admin-badge");
+  if (!badge) {
+    badge = document.createElement("div");
+    badge.id = "memo-admin-badge";
+    badge.style.margin = "10px 24px 2px 36px";
+    badge.style.fontWeight = "900";
+    badge.style.color = "#007aff";
+    badge.style.fontFamily = "Inter, sans-serif";
+    const shell = document.querySelector(".app-shell");
+    if (shell) shell.prepend(badge);
+  }
+
+  badge.innerText = role === "super_admin"
+    ? `Accesso Super Admin: ${user.email}`
+    : `Accesso utente: ${user.email}`;
+}
+
+window.addEventListener("load", () => {
+  const loginBtn = document.getElementById("memo-login-btn");
+  const registerBtn = document.getElementById("memo-register-btn");
+  const loginScreen = document.getElementById("memo-login-screen");
+
+  registerBtn.onclick = async () => {
+    const email = document.getElementById("memo-email").value.trim();
+    const password = document.getElementById("memo-password").value;
+
+    if (!email || !password) {
+      showAuthMessage("Inserisci email e password.");
+      return;
+    }
+
+    if (password.length < 6) {
+      showAuthMessage("La password deve avere almeno 6 caratteri.");
+      return;
+    }
+
+    try {
+      registerBtn.disabled = true;
+      showAuthMessage("Registrazione in corso...", true);
+
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      const role = await createUserProfileFirstUserIsSuperAdmin(cred.user);
+
+      if (role === "super_admin") {
+        showAuthMessage("Prima registrazione completata: sei Super Admin.", true);
+      } else {
+        showAuthMessage("Registrazione completata. Account utente creato.", true);
+      }
+    } catch(e) {
+      showAuthMessage(traduciErroreFirebase(e.code || e.message));
+    } finally {
+      registerBtn.disabled = false;
+    }
+  };
+
+  loginBtn.onclick = async () => {
+    const email = document.getElementById("memo-email").value.trim();
+    const password = document.getElementById("memo-password").value;
+
+    if (!email || !password) {
+      showAuthMessage("Inserisci email e password.");
+      return;
+    }
+
+    try {
+      loginBtn.disabled = true;
+      showAuthMessage("Accesso in corso...", true);
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch(e) {
+      showAuthMessage(traduciErroreFirebase(e.code || e.message));
+    } finally {
+      loginBtn.disabled = false;
+    }
+  };
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const role = await getUserRole(user);
+      localStorage.setItem("memoGlassUserRole", role);
+      localStorage.setItem("memoGlassUserEmail", user.email || "");
+
+      if (loginScreen) loginScreen.style.display = "none";
+      ensureLogoutButton();
+      ensureAdminBadge(user, role);
+    } else {
+      localStorage.removeItem("memoGlassUserRole");
+      localStorage.removeItem("memoGlassUserEmail");
+      if (loginScreen) loginScreen.style.display = "flex";
+    }
+  });
+});
+
+function traduciErroreFirebase(code) {
+  const errori = {
+    "auth/email-already-in-use": "Questa email è già registrata. Usa Accedi.",
+    "auth/invalid-email": "Email non valida.",
+    "auth/weak-password": "Password troppo debole. Usa almeno 6 caratteri.",
+    "auth/user-not-found": "Utente non trovato. Prima registrati.",
+    "auth/wrong-password": "Password errata.",
+    "auth/invalid-credential": "Email o password non corretti.",
+    "auth/network-request-failed": "Errore di rete. Controlla la connessione.",
+    "permission-denied": "Permessi Firebase mancanti. Devi attivare Firestore Database."
+  };
+
+  return errori[code] || `Errore: ${code}`;
+}
 </script>
 
+<div id="memo-login-screen" style="position:fixed;inset:0;background:linear-gradient(135deg,#001b3a,#007aff);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Inter,sans-serif;">
+  <div style="width:100%;max-width:430px;background:white;border-radius:30px;padding:30px;box-shadow:0 30px 90px rgba(0,0,0,.45);">
+    <div style="text-align:center;margin-bottom:22px;">
+      <div style="width:76px;height:76px;margin:0 auto 14px;border-radius:22px;background:#eef6ff;display:flex;align-items:center;justify-content:center;color:#007aff;font-size:2rem;font-weight:900;">MG</div>
+      <h1 style="margin:0;font-size:2rem;color:#007aff;font-weight:900;letter-spacing:-1px;">Memo Glass</h1>
+      <p style="margin:8px 0 0;color:#64748b;font-size:.95rem;">Accedi o registra il primo Super Admin</p>
+    </div>
 
-<div id="memo-login-screen" style="position:fixed;inset:0;background:#0f172a;z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;">
-  <div style="width:100%;max-width:420px;background:white;border-radius:28px;padding:30px;box-shadow:0 25px 80px rgba(0,0,0,.45);font-family:Inter,sans-serif;">
-    <h1 style="margin:0 0 8px;font-size:2rem;color:#007aff;font-weight:900;">Memo Glass</h1>
-    <p style="margin:0 0 24px;color:#64748b;">Accedi o registrati per entrare nel gestionale.</p>
+    <label style="display:block;font-size:.72rem;font-weight:900;color:#64748b;text-transform:uppercase;margin-bottom:6px;">Email</label>
+    <input id="memo-email" type="email" placeholder="admin@memoglass.it" autocomplete="email" style="width:100%;padding:15px;border-radius:15px;border:1px solid #dbe4ee;margin-bottom:13px;font-size:16px;">
 
-    <input id="memo-email" type="email" placeholder="Email" style="width:100%;padding:14px;border-radius:14px;border:1px solid #dbe4ee;margin-bottom:12px;font-size:16px;">
-    <input id="memo-password" type="password" placeholder="Password" style="width:100%;padding:14px;border-radius:14px;border:1px solid #dbe4ee;margin-bottom:18px;font-size:16px;">
+    <label style="display:block;font-size:.72rem;font-weight:900;color:#64748b;text-transform:uppercase;margin-bottom:6px;">Password</label>
+    <input id="memo-password" type="password" placeholder="Minimo 6 caratteri" autocomplete="current-password" style="width:100%;padding:15px;border-radius:15px;border:1px solid #dbe4ee;margin-bottom:18px;font-size:16px;">
 
-    <button id="memo-login-btn" style="width:100%;padding:14px;border:none;border-radius:14px;background:#007aff;color:white;font-weight:900;font-size:16px;margin-bottom:10px;cursor:pointer;">Accedi</button>
+    <button id="memo-login-btn" type="button" style="width:100%;padding:15px;border:none;border-radius:15px;background:#007aff;color:white;font-weight:900;font-size:16px;margin-bottom:10px;cursor:pointer;">Accedi</button>
 
-    <button id="memo-register-btn" style="width:100%;padding:14px;border:none;border-radius:14px;background:#10b981;color:white;font-weight:900;font-size:16px;cursor:pointer;">Registrati</button>
+    <button id="memo-register-btn" type="button" style="width:100%;padding:15px;border:none;border-radius:15px;background:#10b981;color:white;font-weight:900;font-size:16px;cursor:pointer;">Prima registrazione / Registrati</button>
 
-    <div id="memo-auth-status" style="margin-top:14px;font-size:.9rem;color:#ef4444;font-weight:700;"></div>
+    <div id="memo-auth-status" style="margin-top:15px;font-size:.9rem;color:#ef4444;font-weight:800;line-height:1.35;text-align:center;"></div>
+
+    <div style="margin-top:18px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:15px;padding:12px;color:#64748b;font-size:.8rem;line-height:1.45;">
+      La prima email registrata diventa automaticamente <b>Super Admin</b>. Gli account successivi vengono creati come utenti normali.
+    </div>
   </div>
 </div>
-
-<script type="module">
-window.addEventListener("load", () => {
-  const waitFirebase = setInterval(() => {
-    if(window.memoAuth && window.memoFirebase){
-      clearInterval(waitFirebase);
-
-      const auth = window.memoAuth;
-      const {
-        createUserWithEmailAndPassword,
-        signInWithEmailAndPassword,
-        onAuthStateChanged
-      } = window.memoFirebase;
-
-      const loginScreen = document.getElementById("memo-login-screen");
-      const status = document.getElementById("memo-auth-status");
-
-      document.getElementById("memo-register-btn").onclick = async () => {
-        const email = document.getElementById("memo-email").value;
-        const password = document.getElementById("memo-password").value;
-
-        try {
-          await createUserWithEmailAndPassword(auth, email, password);
-          status.style.color = "#10b981";
-          status.innerText = "Registrazione completata.";
-        } catch(e){
-          status.innerText = e.message;
-        }
-      };
-
-      document.getElementById("memo-login-btn").onclick = async () => {
-        const email = document.getElementById("memo-email").value;
-        const password = document.getElementById("memo-password").value;
-
-        try {
-          await signInWithEmailAndPassword(auth, email, password);
-        } catch(e){
-          status.innerText = e.message;
-        }
-      };
-
-      onAuthStateChanged(auth, (user) => {
-        if(user){
-          loginScreen.style.display = "none";
-        } else {
-          loginScreen.style.display = "flex";
-        }
-      });
-    }
-  }, 300);
-});
-</script>
 
 </body></html>
