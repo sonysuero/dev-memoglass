@@ -24504,5 +24504,297 @@ select:disabled{
 })();
 </script>
 
+
+<style>
+.memo-admin-delete-user-btn{
+    background:#dc2626!important;
+    color:#fff!important;
+    border:none!important;
+    border-radius:10px!important;
+    padding:9px 11px!important;
+    font-weight:900!important;
+    cursor:pointer!important;
+    display:inline-flex!important;
+    visibility:visible!important;
+    opacity:1!important;
+    margin-left:6px!important;
+}
+</style>
+
+<script>
+/* SUPER ADMIN: PULSANTE ELIMINA SU FIREBASE E UTENTI REGISTRATI */
+(function(){
+
+  function currentUser(){
+    if(window.__memoGlassFirebaseLocalUser) return window.__memoGlassFirebaseLocalUser;
+    if(typeof getCurrentUser==="function"){
+      try{return getCurrentUser()}catch(e){}
+    }
+    return null;
+  }
+
+  function ensureFirebase(){
+    const cfg = window.MEMOGLASS_FIREBASE_CONFIG || {
+      apiKey:"AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",
+      authDomain:"memoglass-83f62.firebaseapp.com",
+      projectId:"memoglass-83f62",
+      storageBucket:"memoglass-83f62.firebasestorage.app",
+      messagingSenderId:"776874023547",
+      appId:"1:776874023547:web:0436e0b26cf1221578a0de",
+      measurementId:"G-J628CF7XBE"
+    };
+    if(!window.firebase) return false;
+    if(!firebase.apps.length) firebase.initializeApp(cfg);
+    return true;
+  }
+
+  function db(){
+    if(!ensureFirebase()) throw new Error("Firebase non caricato");
+    return firebase.firestore();
+  }
+
+  function auth(){
+    if(!ensureFirebase()) throw new Error("Firebase non caricato");
+    return firebase.auth();
+  }
+
+  function isSuperAdmin(){
+    const u = currentUser();
+    return !!(u && u.role === "superadmin");
+  }
+
+  function myUid(){
+    const u = currentUser();
+    if(u && (u.uid || u.id)) return u.uid || u.id;
+    if(window.firebase && firebase.auth && firebase.auth().currentUser) return firebase.auth().currentUser.uid;
+    return "";
+  }
+
+  async function reauthSuperAdmin(password){
+    const au = auth().currentUser;
+    const u = currentUser();
+    const email = au?.email || u?.email || "";
+    if(au && email){
+      const cred = firebase.auth.EmailAuthProvider.credential(email,password);
+      await au.reauthenticateWithCredential(cred);
+    }
+  }
+
+  window.memoGlassSuperAdminDeleteUser = async function(targetUid,email){
+    if(!isSuperAdmin()){
+      alert("Solo il Super Admin può eliminare utenti.");
+      return;
+    }
+
+    if(!targetUid){
+      alert("Utente non valido.");
+      return;
+    }
+
+    if(targetUid === myUid()){
+      alert("Non puoi eliminare il tuo account Super Admin da qui.");
+      return;
+    }
+
+    const ok = confirm(
+      "ATTENZIONE\n\n" +
+      "Stai per eliminare definitivamente questo utente:\n" +
+      (email || targetUid) + "\n\n" +
+      "Verranno eliminati profilo MemoGlass e dati collegati.\n" +
+      "L'operazione non è reversibile.\n\n" +
+      "Vuoi continuare?"
+    );
+    if(!ok) return;
+
+    const confirmText = prompt("Per confermare scrivi: ELIMINA");
+    if(confirmText !== "ELIMINA"){
+      alert("Eliminazione annullata.");
+      return;
+    }
+
+    const password = prompt("Inserisci la password del Super Admin:");
+    if(!password){
+      alert("Password obbligatoria.");
+      return;
+    }
+
+    try{
+      await reauthSuperAdmin(password);
+
+      await db().collection("users").doc(targetUid).delete();
+
+      try{ await db().collection("memoGlassUserData").doc(targetUid).delete(); }catch(e){}
+      try{ await db().collection("companies").doc(targetUid).delete(); }catch(e){}
+
+      // Se era titolare azienda, elimina anche i membri collegati a companyId = uid
+      try{
+        const snap = await db().collection("users").where("companyId","==",targetUid).get();
+        const batch = db().batch();
+        snap.docs.forEach(doc=>{
+          if(doc.id !== targetUid) batch.delete(doc.ref);
+        });
+        await batch.commit();
+      }catch(e){}
+
+      alert(
+        "Utente eliminato dal database MemoGlass.\n\n" +
+        "Nota: per rimuoverlo anche da Firebase Authentication serve eliminarlo dalla console Firebase oppure usare una Cloud Function Admin."
+      );
+
+      if(typeof renderFirebaseRealUsers === "function") try{ await renderFirebaseRealUsers(); }catch(e){}
+      if(typeof renderPlatformPlansDashboard === "function") try{ await renderPlatformPlansDashboard(); }catch(e){}
+      if(typeof renderCompanyPanel === "function") try{ await renderCompanyPanel(); }catch(e){}
+
+      addAdminDeleteButtons();
+
+    }catch(e){
+      console.error(e);
+      if(String(e.code||"").includes("wrong-password") || String(e.message||"").toLowerCase().includes("password")){
+        alert("Password Super Admin non corretta.");
+      }else{
+        alert("Errore eliminazione utente: " + (e.message || e));
+      }
+    }
+  };
+
+  function extractUidAndEmail(row){
+    const text = row.textContent || "";
+    let email = "";
+    let uid = "";
+
+    const emailMatch = text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+    if(emailMatch) email = emailMatch[0];
+
+    // Cerca uid dentro onclick esistenti
+    row.querySelectorAll("button,a,select").forEach(node=>{
+      const onclick = node.getAttribute("onclick") || "";
+      const vals = Array.from(onclick.matchAll(/'([^']+)'/g)).map(m=>m[1]);
+      vals.forEach(v=>{
+        if(v.includes("@")) email = v;
+        else if(v.length > 8 && !uid) uid = v;
+      });
+    });
+
+    uid =
+      uid ||
+      row.getAttribute("data-uid") ||
+      row.getAttribute("data-user-id") ||
+      row.getAttribute("data-id") ||
+      row.getAttribute("data-team-uid") ||
+      "";
+
+    // Cerca in select id tipo platformPlan-UID
+    row.querySelectorAll("[id]").forEach(node=>{
+      const id = node.id || "";
+      const m = id.match(/(?:platformPlan|userPlan|firebaseUser|registeredUser)-(.+)/);
+      if(m && !uid) uid = m[1];
+    });
+
+    return {uid,email};
+  }
+
+  function addButtonToRow(row){
+    if(row.querySelector(".memo-admin-delete-user-btn")) return;
+
+    const data = extractUidAndEmail(row);
+    if(!data.uid) return;
+
+    // evita di aggiungerlo alla riga del super admin corrente
+    if(data.uid === myUid()) return;
+
+    const actions =
+      row.querySelector(".company-actions") ||
+      row.querySelector(".memo-team-actions") ||
+      row.querySelector(".user-actions") ||
+      row.querySelector(".actions") ||
+      row;
+
+    const btn = document.createElement("button");
+    btn.className = "memo-admin-delete-user-btn";
+    btn.textContent = "Elimina definitivamente";
+    btn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      memoGlassSuperAdminDeleteUser(data.uid,data.email);
+      return false;
+    };
+
+    actions.appendChild(btn);
+  }
+
+  function addAdminDeleteButtons(){
+    if(!isSuperAdmin()) return;
+
+    // Gestione utenti Firebase + Utenti registrati + Piani utenti
+    const containers = [
+      "#firebaseRealUsersList",
+      "#registeredUsersList",
+      "#usersList",
+      "#platformPlansList",
+      "#companyUsersList",
+      ".firebase-users-list",
+      ".registered-users-list",
+      ".users-list",
+      ".platform-users-list"
+    ];
+
+    containers.forEach(selector=>{
+      document.querySelectorAll(selector).forEach(container=>{
+        container.querySelectorAll(
+          ".company-user-row,.firebase-user-row,.registered-user-row,.user-row,.memo-team-row,.card"
+        ).forEach(row=>{
+          addButtonToRow(row);
+        });
+      });
+    });
+
+    // fallback: cerca sezioni con titolo Gestione utenti Firebase / Utenti registrati
+    document.querySelectorAll(".settings-section,.memo-page-card,.modal-content,.settings-modal").forEach(section=>{
+      const t = (section.textContent || "").toLowerCase();
+      if(
+        t.includes("gestione utenti firebase") ||
+        t.includes("utenti registrati") ||
+        t.includes("accessi firebase")
+      ){
+        section.querySelectorAll(".company-user-row,.firebase-user-row,.registered-user-row,.user-row,.card").forEach(row=>{
+          addButtonToRow(row);
+        });
+      }
+    });
+  }
+
+  [
+    "renderFirebaseRealUsers",
+    "renderPlatformPlansDashboard",
+    "renderCompanyUsers",
+    "renderCompanyPanel",
+    "renderRegisteredUsers",
+    "renderUsers"
+  ].forEach(fn=>{
+    const old = window[fn];
+    if(typeof old === "function" && !old.__adminDeleteButtonWrapped){
+      const wrapped = async function(){
+        const r = await old.apply(this,arguments);
+        setTimeout(addAdminDeleteButtons,200);
+        setTimeout(addAdminDeleteButtons,700);
+        setTimeout(addAdminDeleteButtons,1500);
+        return r;
+      };
+      wrapped.__adminDeleteButtonWrapped = true;
+      window[fn] = wrapped;
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded",function(){
+    setTimeout(addAdminDeleteButtons,600);
+    setTimeout(addAdminDeleteButtons,1800);
+    setTimeout(addAdminDeleteButtons,3500);
+  });
+
+  setInterval(addAdminDeleteButtons,2500);
+
+})();
+</script>
+
 </body>
 </html>
