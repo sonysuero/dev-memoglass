@@ -23257,5 +23257,588 @@ select:disabled{
 })();
 </script>
 
+
+<style>
+/* MEMOGLASS LOGIN UX FIX */
+.memo-password-wrap{
+  position:relative!important;
+}
+.memo-password-toggle{
+  position:absolute!important;
+  right:10px!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  border:none!important;
+  background:#eef2f7!important;
+  color:#111827!important;
+  border-radius:10px!important;
+  padding:7px 9px!important;
+  font-weight:900!important;
+  cursor:pointer!important;
+  z-index:5!important;
+}
+#memoLoginErrorBox{
+  margin:12px 0!important;
+  padding:12px!important;
+  border-radius:12px!important;
+  background:#fff7ed!important;
+  color:#9a3412!important;
+  font-weight:900!important;
+  border:1px solid #fed7aa!important;
+  line-height:1.35!important;
+}
+</style>
+
+<script>
+/* MEMOGLASS LOGIN: PASSWORD VISIBILE + ERRORI CHIARI */
+(function(){
+
+  function firebaseReady(){
+    const cfg = window.MEMOGLASS_FIREBASE_CONFIG || {
+      apiKey:"AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",
+      authDomain:"memoglass-83f62.firebaseapp.com",
+      projectId:"memoglass-83f62",
+      storageBucket:"memoglass-83f62.firebasestorage.app",
+      messagingSenderId:"776874023547",
+      appId:"1:776874023547:web:0436e0b26cf1221578a0de",
+      measurementId:"G-J628CF7XBE"
+    };
+
+    if(!window.firebase) return false;
+    if(!firebase.apps.length) firebase.initializeApp(cfg);
+    return true;
+  }
+
+  function findLoginCard(){
+    return document.querySelector("#firebaseLoginScreen form") ||
+           document.querySelector("#loginScreen form") ||
+           document.querySelector(".login-card") ||
+           document.querySelector(".auth-card") ||
+           document.querySelector("form") ||
+           document.body;
+  }
+
+  function showError(msg){
+    let box = document.getElementById("memoLoginErrorBox");
+    if(!box){
+      box = document.createElement("div");
+      box.id = "memoLoginErrorBox";
+      const card = findLoginCard();
+      card.appendChild(box);
+    }
+    box.textContent = msg;
+  }
+
+  function clearError(){
+    const box = document.getElementById("memoLoginErrorBox");
+    if(box) box.textContent = "";
+  }
+
+  function fields(){
+    const email = document.querySelector("input[type='email']") ||
+                  document.querySelector("#email") ||
+                  document.querySelector("#loginEmail") ||
+                  document.querySelector("[name='email']");
+
+    const password = document.querySelector("input[type='password']") ||
+                     document.querySelector("input[data-login-password='true']") ||
+                     document.querySelector("#password") ||
+                     document.querySelector("#loginPassword") ||
+                     document.querySelector("[name='password']");
+
+    return {email,password};
+  }
+
+  function addPasswordToggle(){
+    const f = fields();
+    const input = f.password;
+    if(!input || input.__memoPasswordToggle) return;
+
+    input.__memoPasswordToggle = true;
+    input.setAttribute("data-login-password","true");
+
+    const parent = input.parentElement;
+    if(parent){
+      parent.classList.add("memo-password-wrap");
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "memo-password-toggle";
+      btn.textContent = "👁";
+      btn.onclick = function(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        if(input.type === "password"){
+          input.type = "text";
+          btn.textContent = "🙈";
+        }else{
+          input.type = "password";
+          btn.textContent = "👁";
+        }
+
+        input.focus();
+        return false;
+      };
+
+      parent.appendChild(btn);
+    }
+  }
+
+  async function login(){
+    clearError();
+
+    if(!firebaseReady()){
+      showError("Firebase non caricato: il file index.html non è completo o il browser sta bloccando gli script.");
+      return;
+    }
+
+    const f = fields();
+
+    if(!f.email || !f.password){
+      showError("Campi login non trovati. Ricarica la pagina con CTRL + SHIFT + R.");
+      return;
+    }
+
+    const email = f.email.value.trim();
+    const password = f.password.value;
+
+    if(!email || !password){
+      showError("Inserisci email e password.");
+      return;
+    }
+
+    try{
+      showError("Accesso in corso...");
+
+      const cred = await firebase.auth().signInWithEmailAndPassword(email,password);
+      const user = cred.user;
+
+      let profile = {
+        uid:user.uid,
+        id:user.uid,
+        email:user.email || email,
+        displayName:user.displayName || "",
+        name:user.displayName || "",
+        role:"user",
+        companyRole:"owner",
+        plan:"free",
+        companyId:user.uid
+      };
+
+      try{
+        const snap = await firebase.firestore().collection("users").doc(user.uid).get();
+        if(snap.exists){
+          profile = Object.assign(profile, snap.data(), {
+            uid:user.uid,
+            id:user.uid,
+            email:snap.data().email || user.email || email
+          });
+        }
+      }catch(e){}
+
+      window.__memoGlassFirebaseLocalUser = profile;
+      localStorage.setItem("memoGlassLastAuthUser", JSON.stringify(profile));
+
+      showError("Accesso riuscito. Caricamento...");
+      setTimeout(function(){ location.reload(); }, 500);
+
+    }catch(e){
+      console.error("MemoGlass login error:", e);
+
+      let msg = "Errore login: " + (e.message || e);
+
+      if(e.code === "auth/invalid-credential" || e.code === "auth/wrong-password"){
+        msg = "Email o password non corretti. Controlla la password o usa recupero password.";
+      }else if(e.code === "auth/user-not-found"){
+        msg = "Utente non trovato con questa email.";
+      }else if(e.code === "auth/too-many-requests"){
+        msg = "Troppi tentativi. Attendi qualche minuto e riprova.";
+      }else if(e.code === "auth/unauthorized-domain"){
+        msg = "Dominio non autorizzato in Firebase: aggiungi " + location.hostname + " in Authentication > Settings > Authorized domains.";
+      }else if(e.code === "auth/network-request-failed"){
+        msg = "Errore rete o blocco browser. Disattiva estensioni/adblock/VPN oppure prova Chrome pulito.";
+      }
+
+      showError(msg);
+    }
+  }
+
+  function patchLoginButtons(){
+    document.querySelectorAll("button,a").forEach(function(btn){
+      const text = (btn.textContent || "").toLowerCase();
+      const onclick = (btn.getAttribute("onclick") || "").toLowerCase();
+
+      if(text.includes("accedi") || onclick.includes("login") || onclick.includes("signin")){
+        if(btn.__memoLoginUx) return;
+        btn.__memoLoginUx = true;
+
+        btn.onclick = function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          login();
+          return false;
+        };
+      }
+    });
+  }
+
+  function boot(){
+    firebaseReady();
+    addPasswordToggle();
+    patchLoginButtons();
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    setTimeout(boot,300);
+    setTimeout(boot,1000);
+    setTimeout(boot,2500);
+  });
+
+  setInterval(boot,2500);
+
+  window.memoGlassLoginUxFixed = login;
+})();
+</script>
+
+
+<style>
+/* MEMOGLASS MOBILE CALENDAR FIX */
+@media(max-width: 768px){
+
+  body{
+    overflow-x:hidden!important;
+  }
+
+  .calendar-card,
+  .calendar-section,
+  .dashboard-card{
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+
+  .calendar-grid,
+  .month-grid,
+  .grid.month-view,
+  .grid:not(.week-view):not(.day-view){
+    display:grid!important;
+    grid-template-columns:repeat(7, minmax(0, 1fr))!important;
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+
+  .calendar-grid > *,
+  .month-grid > *,
+  .grid.month-view > *,
+  .grid:not(.week-view):not(.day-view) > *,
+  .day,
+  .calendar-day,
+  .month-day{
+    min-width:0!important;
+    width:auto!important;
+    max-width:100%!important;
+    min-height:74px!important;
+    height:auto!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+    padding:5px!important;
+    position:relative!important;
+    touch-action:manipulation!important;
+  }
+
+  .day-number,
+  .date-number{
+    font-size:.72rem!important;
+    font-weight:900!important;
+    line-height:1!important;
+  }
+
+  .memo-mobile-appt-chip{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    margin-top:3px!important;
+    padding:3px 4px!important;
+    border-radius:6px!important;
+    background:#007aff!important;
+    color:#fff!important;
+    font-size:.48rem!important;
+    line-height:1.05!important;
+    font-weight:900!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    pointer-events:auto!important;
+  }
+
+  .bottom-actions,
+  .fixed-actions,
+  .mobile-bottom-bar{
+    z-index:50!important;
+  }
+
+  .calendar-card,
+  .calendar-section{
+    padding-bottom:120px!important;
+  }
+}
+
+.memo-mobile-calendar-clickable{
+  cursor:pointer!important;
+}
+</style>
+
+<script>
+/* MEMOGLASS MOBILE CALENDAR FIX */
+(function(){
+
+  function normalizeDate(value){
+    if(!value) return "";
+    const s = String(value).trim();
+
+    const iso = s.match(/(20\d{2})[-_\/](\d{1,2})[-_\/](\d{1,2})/);
+    if(iso){
+      return iso[1] + "-" + String(iso[2]).padStart(2,"0") + "-" + String(iso[3]).padStart(2,"0");
+    }
+
+    const it = s.match(/(\d{1,2})[-_\/](\d{1,2})[-_\/](20\d{2})/);
+    if(it){
+      return it[3] + "-" + String(it[2]).padStart(2,"0") + "-" + String(it[1]).padStart(2,"0");
+    }
+
+    return s;
+  }
+
+  function isAppointmentObject(obj){
+    return obj && typeof obj === "object" && (
+      "inizio" in obj ||
+      "ora" in obj ||
+      "cliente" in obj ||
+      "nome" in obj ||
+      "lavoro" in obj ||
+      "servizio" in obj ||
+      "title" in obj
+    );
+  }
+
+  function collectAppointments(){
+    const out = [];
+
+    for(let i=0;i<localStorage.length;i++){
+      const key = localStorage.key(i);
+      if(!key) continue;
+
+      const lk = key.toLowerCase();
+      if(
+        !lk.includes("appointment") &&
+        !lk.includes("appunt") &&
+        !lk.includes("agenda") &&
+        !lk.includes("memo")
+      ){
+        continue;
+      }
+
+      let data;
+      try{ data = JSON.parse(localStorage.getItem(key)); }catch(e){ continue; }
+
+      if(Array.isArray(data)){
+        data.forEach((app,index)=>{
+          if(!isAppointmentObject(app)) return;
+          const date = normalizeDate(app.date || app.data || app.dayKey || app.giorno || key);
+          if(date) out.push({app,index,date,key});
+        });
+      }
+
+      if(data && typeof data === "object" && !Array.isArray(data)){
+        Object.keys(data).forEach(dayKey=>{
+          const value = data[dayKey];
+
+          if(Array.isArray(value)){
+            value.forEach((app,index)=>{
+              if(!isAppointmentObject(app)) return;
+              const date = normalizeDate(app.date || app.data || app.dayKey || dayKey);
+              if(date) out.push({app,index,date,key});
+            });
+          }else if(isAppointmentObject(value)){
+            const date = normalizeDate(value.date || value.data || value.dayKey || dayKey);
+            if(date) out.push({app:value,index:0,date,key});
+          }
+        });
+      }
+    }
+
+    const seen = {};
+    return out.filter(item=>{
+      const a = item.app;
+      const sig = item.date + "|" + (a.inizio || a.ora || "") + "|" + (a.nome || a.cliente || a.lavoro || a.title || "");
+      if(seen[sig]) return false;
+      seen[sig] = true;
+      return true;
+    });
+  }
+
+  function currentMonthDate(){
+    let d = window.currentDate || window.selectedDate || window.vokDate || new Date();
+    if(!(d instanceof Date)) d = new Date(d);
+    if(isNaN(d.getTime())) d = new Date();
+    return d;
+  }
+
+  function cellIso(cell){
+    const text =
+      cell.querySelector(".day-number")?.textContent ||
+      cell.querySelector(".date-number")?.textContent ||
+      cell.textContent ||
+      "";
+
+    const day = parseInt(text,10);
+    if(!day) return "";
+
+    const d = currentMonthDate();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(day).padStart(2,"0");
+  }
+
+  function appointmentText(app){
+    const time = app.inizio || app.ora || app.start || "";
+    const name = app.cliente || app.nome || app.customerName || app.lavoro || app.servizio || app.title || "Appuntamento";
+    return (time ? time + " " : "") + name;
+  }
+
+  function appointmentColor(app){
+    const calendars = window.calendars || window.calendarList || window.appCalendars || [];
+    const cal = String(app.calendarId || app.calendar || app.calendario || app.calendarName || "").toLowerCase();
+
+    if(Array.isArray(calendars) && cal){
+      const found = calendars.find(c=>{
+        const id = String(c.id || c.calendarId || "").toLowerCase();
+        const name = String(c.name || c.nome || "").toLowerCase();
+        return id === cal || name === cal;
+      });
+
+      if(found) return found.color || found.colore || "#007aff";
+    }
+
+    return app.color || app.colore || "#007aff";
+  }
+
+  function getMonthGrid(){
+    return (
+      document.querySelector(".calendar-grid") ||
+      document.querySelector(".month-grid") ||
+      document.querySelector(".grid.month-view") ||
+      document.querySelector(".grid:not(.week-view):not(.day-view)")
+    );
+  }
+
+  function fixCalendarMobile(){
+    const grid = getMonthGrid();
+    if(!grid) return;
+
+    grid.style.display = "grid";
+    grid.style.gridTemplateColumns = "repeat(7, minmax(0, 1fr))";
+    grid.style.width = "100%";
+    grid.style.maxWidth = "100%";
+    grid.style.boxSizing = "border-box";
+
+    const cells = Array.from(grid.querySelectorAll(".day,.calendar-day,.month-day"));
+    if(!cells.length) return;
+
+    const appointments = collectAppointments();
+
+    cells.forEach(cell=>{
+      cell.classList.add("memo-mobile-calendar-clickable");
+
+      const iso = cellIso(cell);
+      if(!iso) return;
+
+      const dayApps = appointments.filter(x=>x.date === iso);
+
+      cell.querySelectorAll(".memo-mobile-appt-chip").forEach(n=>n.remove());
+
+      dayApps.slice(0,2).forEach(item=>{
+        const chip = document.createElement("div");
+        chip.className = "memo-mobile-appt-chip";
+        chip.style.background = appointmentColor(item.app);
+        chip.textContent = appointmentText(item.app);
+        chip.title = appointmentText(item.app);
+
+        chip.onclick = function(e){
+          e.stopPropagation();
+
+          if(typeof openAppointmentDetail === "function"){
+            try{ openAppointmentDetail(item.date, item.index); }catch(err){}
+          }
+        };
+
+        cell.appendChild(chip);
+      });
+
+      cell.onclick = cell.onclick || function(){
+        if(typeof selectDay === "function"){
+          try{ selectDay(iso); return; }catch(e){}
+        }
+
+        if(typeof openDayAppointments === "function"){
+          try{ openDayAppointments(iso); return; }catch(e){}
+        }
+
+        window.selectedDate = new Date(iso + "T12:00:00");
+        if(typeof renderTodayAppointments === "function"){
+          try{ renderTodayAppointments(); }catch(e){}
+        }
+      };
+    });
+  }
+
+  function patchRender(){
+    if(window.__memoMobileCalendarPatch) return;
+    window.__memoMobileCalendarPatch = true;
+
+    const old = window.renderCalendar;
+
+    if(typeof old === "function"){
+      window.renderCalendar = function(){
+        const result = old.apply(this, arguments);
+
+        setTimeout(fixCalendarMobile,80);
+        setTimeout(fixCalendarMobile,300);
+        setTimeout(fixCalendarMobile,900);
+
+        return result;
+      };
+    }
+  }
+
+  function boot(){
+    patchRender();
+    fixCalendarMobile();
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    setTimeout(boot,500);
+    setTimeout(boot,1500);
+    setTimeout(boot,3000);
+  });
+
+  window.addEventListener("resize",function(){
+    setTimeout(fixCalendarMobile,200);
+  });
+
+  window.addEventListener("orientationchange",function(){
+    setTimeout(fixCalendarMobile,500);
+  });
+
+  setInterval(fixCalendarMobile,3500);
+
+  window.memoGlassFixMobileCalendar = fixCalendarMobile;
+
+})();
+</script>
+
 </body>
 </html>
