@@ -9266,4 +9266,444 @@ window.addEventListener("load", function(){
 });
 </script>
 
+
+<!-- MEMO GLASS FIX DEFINITIVO: LOGOUT, UTENTI, SYNC FIREBASE, RICERCA CLIENTI -->
+<style>
+.memo-client-suggest-box{
+  display:none;
+  position:absolute;
+  z-index:100000;
+  left:0;
+  right:0;
+  top:calc(100% + 6px);
+  background:#fff;
+  border:1px solid #d7dee8;
+  border-radius:12px;
+  box-shadow:0 10px 28px rgba(0,0,0,.14);
+  overflow:hidden;
+  max-height:240px;
+  overflow-y:auto;
+}
+.memo-client-suggest-item{
+  padding:11px 12px;
+  border-bottom:1px solid #eef2f7;
+  cursor:pointer;
+  font-size:.84rem;
+  line-height:1.35;
+}
+.memo-client-suggest-item:hover{background:#eef6ff;}
+.memo-client-suggest-item small{display:block;color:#64748b;margin-top:3px;}
+.memo-client-suggest-empty{padding:11px 12px;color:#64748b;font-size:.84rem;}
+</style>
+<script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  getDocs,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const memoFixConfig = {
+  apiKey: "AIzaSyAMZo4pRdsv9CEm5P4qcFS7IjZq729ZrF4",
+  authDomain: "memoglass-83f62.firebaseapp.com",
+  projectId: "memoglass-83f62",
+  storageBucket: "memoglass-83f62.firebasestorage.app",
+  messagingSenderId: "776874023547",
+  appId: "1:776874023547:web:0436e0b26cf1221578a0de",
+  measurementId: "G-J628CF7XBE"
+};
+
+const memoFixApp = getApps().length ? getApp() : initializeApp(memoFixConfig);
+const memoFixAuth = getAuth(memoFixApp);
+const memoFixDb = getFirestore(memoFixApp);
+
+const STORAGE_PREFIX_FIX = "riparabrezza-gestionale-v1-";
+const CALENDARS_KEY_FIX = "riparabrezza-work-calendars-v1";
+const SETTINGS_KEY_FIX = "memo-glass-settings-v1";
+let memoFixUser = null;
+let memoFixCloudLoaded = false;
+let memoFixWritingCloud = false;
+let memoFixClientsCache = [];
+
+function mf(id){ return document.getElementById(id); }
+function safeText(v){ return String(v || "").replace(/[&<>\"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m])); }
+function dateIdFromKey(key){ return String(key || "").replace(STORAGE_PREFIX_FIX, "").replace(/[^0-9-]/g, "_"); }
+function isAppointmentKey(key){ return String(key || "").startsWith(STORAGE_PREFIX_FIX); }
+function userRoot(){ return memoFixUser ? doc(memoFixDb, "memoGlassSync", memoFixUser.uid) : null; }
+function appointmentsCol(){ return memoFixUser ? collection(memoFixDb, "memoGlassSync", memoFixUser.uid, "appointments") : null; }
+
+async function cloudSetState(partial){
+  if(!memoFixUser || memoFixWritingCloud) return;
+  try{
+    await setDoc(userRoot(), { ...partial, updatedAt: serverTimestamp() }, { merge:true });
+  }catch(e){ console.warn("Memo sync stato non salvato:", e); }
+}
+
+async function cloudSetAppointments(key, data){
+  if(!memoFixUser || memoFixWritingCloud || !isAppointmentKey(key)) return;
+  try{
+    await setDoc(doc(appointmentsCol(), dateIdFromKey(key)), {
+      key,
+      date: dateIdFromKey(key),
+      appointments: Array.isArray(data) ? data : [],
+      updatedAt: serverTimestamp()
+    }, { merge:true });
+  }catch(e){ console.warn("Memo sync appuntamenti non salvato:", e); }
+}
+
+function cleanCalendars(calendars){
+  let arr = Array.isArray(calendars) ? calendars : [];
+  arr = arr.filter(cal => {
+    const name = String(cal?.name || "").trim();
+    const id = String(cal?.id || "").trim();
+    return name && !name.includes("@") && !id.includes("@");
+  });
+  if(!arr.length){
+    arr = [
+      { id:"officina", name:"Officina", color:"#007aff", active:true },
+      { id:"mobile", name:"Mobile", color:"#28a745", active:true }
+    ];
+  }
+  return arr.map((cal, i) => ({
+    id: cal.id || ("cal-" + Date.now() + "-" + i),
+    name: cal.name || "Calendario",
+    color: cal.color || "#007aff",
+    active: cal.active !== false
+  }));
+}
+
+function refreshUi(){
+  try{ if(typeof window.applySettings === "function") window.applySettings(); }catch(e){}
+  try{ if(typeof window.renderCalendarFilters === "function") window.renderCalendarFilters(); }catch(e){}
+  try{ if(typeof window.populateWorkCalendarSelect === "function") window.populateWorkCalendarSelect(); }catch(e){}
+  try{ if(typeof window.renderCalendar === "function") window.renderCalendar(); }catch(e){}
+  try{ if(typeof window.renderStats === "function") window.renderStats(); }catch(e){}
+  try{ if(typeof window.renderList === "function") window.renderList(); }catch(e){}
+}
+
+async function loadCloudState(){
+  if(!memoFixUser) return;
+  memoFixWritingCloud = true;
+  try{
+    const stateSnap = await getDoc(userRoot());
+    if(stateSnap.exists()){
+      const state = stateSnap.data() || {};
+      if(state.settings) localStorage.setItem(SETTINGS_KEY_FIX, JSON.stringify(state.settings));
+      if(state.calendars) localStorage.setItem(CALENDARS_KEY_FIX, JSON.stringify(cleanCalendars(state.calendars)));
+    }else{
+      const localSettings = JSON.parse(localStorage.getItem(SETTINGS_KEY_FIX) || "null");
+      const localCalendars = cleanCalendars(JSON.parse(localStorage.getItem(CALENDARS_KEY_FIX) || "[]"));
+      localStorage.setItem(CALENDARS_KEY_FIX, JSON.stringify(localCalendars));
+      await setDoc(userRoot(), {
+        settings: localSettings,
+        calendars: localCalendars,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      }, { merge:true });
+    }
+
+    const aps = await getDocs(appointmentsCol());
+    aps.forEach(d => {
+      const item = d.data() || {};
+      if(item.key && Array.isArray(item.appointments)){
+        localStorage.setItem(item.key, JSON.stringify(item.appointments));
+      }
+    });
+
+    const fixedCalendars = cleanCalendars(JSON.parse(localStorage.getItem(CALENDARS_KEY_FIX) || "[]"));
+    localStorage.setItem(CALENDARS_KEY_FIX, JSON.stringify(fixedCalendars));
+    await cloudSetState({ calendars: fixedCalendars });
+  }catch(e){
+    console.warn("Memo sync caricamento non riuscito:", e);
+  }finally{
+    memoFixWritingCloud = false;
+    memoFixCloudLoaded = true;
+    refreshUi();
+  }
+}
+
+function wrapStorageFunctions(){
+  if(window.__memoGlassSyncWrapped) return;
+  window.__memoGlassSyncWrapped = true;
+
+  const oldSetAppointments = window.setAppointments;
+  window.setAppointments = function(key, data){
+    if(typeof oldSetAppointments === "function") oldSetAppointments(key, data);
+    else localStorage.setItem(key, JSON.stringify(data || []));
+    cloudSetAppointments(key, data || []);
+  };
+
+  const oldSetCalendars = window.setWorkCalendars;
+  window.setWorkCalendars = function(calendars){
+    const cleaned = cleanCalendars(calendars);
+    if(typeof oldSetCalendars === "function") oldSetCalendars(cleaned);
+    else localStorage.setItem(CALENDARS_KEY_FIX, JSON.stringify(cleaned));
+    cloudSetState({ calendars: cleaned });
+  };
+
+  const oldGetCalendars = window.getWorkCalendars;
+  window.getWorkCalendars = function(){
+    const calendars = cleanCalendars(typeof oldGetCalendars === "function" ? oldGetCalendars() : JSON.parse(localStorage.getItem(CALENDARS_KEY_FIX) || "[]"));
+    localStorage.setItem(CALENDARS_KEY_FIX, JSON.stringify(calendars));
+    return calendars;
+  };
+
+  const oldSetSettings = window.setSettings;
+  window.setSettings = function(settings){
+    if(typeof oldSetSettings === "function") oldSetSettings(settings);
+    else localStorage.setItem(SETTINGS_KEY_FIX, JSON.stringify(settings || {}));
+    cloudSetState({ settings: settings || {} });
+  };
+}
+
+async function loadUsersPanel(){
+  const overlay = mf("memo-users-overlay");
+  const list = mf("memo-users-list");
+  const status = mf("memo-users-status");
+  if(!overlay || !list || !status) return;
+  overlay.style.display = "flex";
+  list.innerHTML = "";
+  status.textContent = "Caricamento utenti...";
+  try{
+    const snap = await getDocs(collection(memoFixDb, "users"));
+    const users = [];
+    snap.forEach(d => users.push({ id:d.id, ...d.data() }));
+    users.sort((a,b) => String(a.email || "").localeCompare(String(b.email || "")));
+    status.textContent = users.length + " utenti trovati.";
+    users.forEach(u => {
+      const p = u.permissions || {};
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><strong>${safeText(u.email || "")}</strong><br><small>${safeText(u.uid || u.id)}</small></td>
+        <td>
+          <select data-fix-role="${safeText(u.id)}">
+            <option value="user" ${u.role === "user" ? "selected" : ""}>Utente</option>
+            <option value="admin" ${u.role === "admin" ? "selected" : ""}>Admin</option>
+            <option value="super_admin" ${u.role === "super_admin" ? "selected" : ""}>Super Admin</option>
+          </select>
+        </td>
+        <td>
+          <div class="memo-permission-list">
+            <label><input type="checkbox" data-fix-uid="${safeText(u.id)}" data-fix-perm="calendar" ${p.calendar !== false ? "checked" : ""}> Calendario</label>
+            <label><input type="checkbox" data-fix-uid="${safeText(u.id)}" data-fix-perm="settings" ${p.settings ? "checked" : ""}> Impostazioni</label>
+            <label><input type="checkbox" data-fix-uid="${safeText(u.id)}" data-fix-perm="users" ${p.users ? "checked" : ""}> Gestione utenti</label>
+            <label><input type="checkbox" data-fix-uid="${safeText(u.id)}" data-fix-perm="deleteUsers" ${p.deleteUsers ? "checked" : ""}> Eliminare utenti</label>
+          </div>
+        </td>
+        <td>
+          <button type="button" class="btn btn-blue" data-fix-save-user="${safeText(u.id)}">Salva</button>
+          <button type="button" class="btn btn-red" data-fix-delete-user="${safeText(u.id)}" ${memoFixUser && u.id === memoFixUser.uid ? "disabled" : ""}>Elimina</button>
+        </td>`;
+      list.appendChild(tr);
+    });
+    list.querySelectorAll("[data-fix-save-user]").forEach(btn => btn.onclick = () => saveUserFix(btn.dataset.fixSaveUser));
+    list.querySelectorAll("[data-fix-delete-user]").forEach(btn => btn.onclick = () => deleteUserFix(btn.dataset.fixDeleteUser));
+  }catch(e){ status.textContent = "Errore gestione utenti: " + (e.code || e.message); }
+}
+
+async function saveUserFix(uid){
+  const status = mf("memo-users-status");
+  const role = document.querySelector(`[data-fix-role="${CSS.escape(uid)}"]`)?.value || "user";
+  const checks = document.querySelectorAll(`input[data-fix-uid="${CSS.escape(uid)}"][data-fix-perm]`);
+  const permissions = {};
+  checks.forEach(c => permissions[c.dataset.fixPerm] = c.checked);
+  try{
+    await updateDoc(doc(memoFixDb, "users", uid), { role, permissions, updatedAt: serverTimestamp() });
+    if(status) status.textContent = "Utente salvato.";
+    await loadUsersPanel();
+  }catch(e){ if(status) status.textContent = "Errore salvataggio utente: " + (e.code || e.message); }
+}
+
+async function deleteUserFix(uid){
+  const status = mf("memo-users-status");
+  if(!confirm("Eliminare questo utente dal gestionale?")) return;
+  try{
+    await deleteDoc(doc(memoFixDb, "users", uid));
+    if(status) status.textContent = "Utente eliminato dal gestionale.";
+    await loadUsersPanel();
+  }catch(e){ if(status) status.textContent = "Errore eliminazione utente: " + (e.code || e.message); }
+}
+
+function bindTopButtons(){
+  const logout = mf("memo-logout") || Array.from(document.querySelectorAll("button")).find(b => (b.textContent || "").trim().toLowerCase() === "esci");
+  if(logout){
+    logout.onclick = async ev => {
+      ev.preventDefault();
+      try{ await signOut(memoFixAuth); }catch(e){ console.warn(e); }
+      localStorage.removeItem("memo-auth-email");
+      location.reload();
+    };
+  }
+
+  const usersBtn = mf("memo-open-users") || Array.from(document.querySelectorAll("button")).find(b => (b.textContent || "").trim().toLowerCase() === "gestione utenti");
+  if(usersBtn){
+    usersBtn.onclick = ev => { ev.preventDefault(); loadUsersPanel(); };
+    usersBtn.style.display = "";
+  }
+
+  const close = mf("memo-users-close");
+  if(close) close.onclick = () => { const ov = mf("memo-users-overlay"); if(ov) ov.style.display = "none"; };
+}
+
+async function loadClientsForPicker(){
+  try{
+    const snap = await getDocs(collection(memoFixDb, "clients"));
+    memoFixClientsCache = [];
+    snap.forEach(d => memoFixClientsCache.push({ id:d.id, ...d.data() }));
+  }catch(e){ console.warn("Clienti non caricati per ricerca appuntamento:", e); }
+}
+
+function clientSearchText(c){
+  return [c.name, c.privateName, c.companyName, c.phone, c.email, c.plate, c.car, c.address, c.vatNumber, c.companyContact].join(" ").toLowerCase();
+}
+
+function fillAppointmentFromClient(c){
+  const set = (id, value) => { const el = mf(id); if(el) el.value = value || ""; };
+  set("nome", c.name || c.privateName || c.companyName || "");
+  set("targa", c.plate || "");
+  set("cell", c.phone || "");
+  set("auto", c.car || "");
+  set("posizione", c.address || "");
+  const type = mf("tipoCliente");
+  if(type && c.type){
+    const target = c.type === "azienda" ? "Azienda" : "Privato";
+    const opt = Array.from(type.options).find(o => o.value.toLowerCase() === target.toLowerCase());
+    if(opt) type.value = opt.value;
+  }
+}
+
+function bindClientPicker(){
+  const nome = mf("nome");
+  if(!nome || nome.dataset.memoClientPickerFixed === "1") return;
+  nome.dataset.memoClientPickerFixed = "1";
+  const parent = nome.parentElement;
+  if(parent) parent.style.position = "relative";
+  const box = document.createElement("div");
+  box.className = "memo-client-suggest-box";
+  box.id = "memoClientSuggestBox";
+  parent.appendChild(box);
+
+  function render(){
+    const q = nome.value.trim().toLowerCase();
+    if(q.length < 2){ box.style.display = "none"; return; }
+    const results = memoFixClientsCache.filter(c => clientSearchText(c).includes(q)).slice(0, 8);
+    box.innerHTML = "";
+    if(!results.length){
+      box.innerHTML = `<div class="memo-client-suggest-empty">Nessun cliente trovato</div>`;
+      box.style.display = "block";
+      return;
+    }
+    results.forEach(c => {
+      const item = document.createElement("div");
+      item.className = "memo-client-suggest-item";
+      item.innerHTML = `<strong>${safeText(c.name || c.privateName || c.companyName || "Cliente")}</strong><small>Tel: ${safeText(c.phone || "-")} · Targa: ${safeText(c.plate || "-")} · Auto: ${safeText(c.car || "-")}</small>`;
+      item.onmousedown = ev => {
+        ev.preventDefault();
+        fillAppointmentFromClient(c);
+        box.style.display = "none";
+      };
+      box.appendChild(item);
+    });
+    box.style.display = "block";
+  }
+
+  nome.addEventListener("input", render);
+  nome.addEventListener("focus", () => { loadClientsForPicker().then(render); });
+  nome.addEventListener("blur", () => setTimeout(() => box.style.display = "none", 180));
+}
+
+function cleanEmailCalendarNow(){
+  try{
+    const calendars = cleanCalendars(JSON.parse(localStorage.getItem(CALENDARS_KEY_FIX) || "[]"));
+    localStorage.setItem(CALENDARS_KEY_FIX, JSON.stringify(calendars));
+    cloudSetState({ calendars });
+  }catch(e){}
+}
+
+function initFixes(){
+  wrapStorageFunctions();
+  bindTopButtons();
+  bindClientPicker();
+  cleanEmailCalendarNow();
+  refreshUi();
+}
+
+onAuthStateChanged(memoFixAuth, async user => {
+  memoFixUser = user || null;
+  bindTopButtons();
+  if(user){
+    await loadCloudState();
+    await loadClientsForPicker();
+    bindClientPicker();
+  }
+});
+
+window.addEventListener("load", () => {
+  initFixes();
+  setTimeout(initFixes, 700);
+  setTimeout(initFixes, 1800);
+});
+</script>
+
+
+<div class="company-footer-box">
+<strong>Memo Glass S.r.l</strong><br>
+Vicolo Legnao 2, Legnano 20025 - © 2026 Memo Glass Srl. Tutti i diritti riservati
+</div>
+
+<script>
+(function(){
+    function closeAppointmentModalAfterSave(){
+        setTimeout(function(){
+            document.querySelectorAll('.modal-overlay').forEach(function(modal){
+                modal.style.display = 'none';
+            });
+            document.body.classList.remove('modal-open');
+
+            if(typeof window.closeModal === 'function'){
+                try { window.closeModal(); } catch(e){}
+            }
+        }, 450);
+    }
+
+    document.addEventListener('click', function(e){
+        var btn = e.target.closest('button');
+        if(!btn) return;
+
+        var txt = (btn.innerText || btn.textContent || '').trim().toLowerCase();
+
+        if(txt.includes('salva appuntamento')){
+            closeAppointmentModalAfterSave();
+        }
+    }, true);
+
+    document.addEventListener('DOMContentLoaded', function(){
+        var correctFooter = '<strong>Memo Glass S.r.l</strong><br>Vicolo Legnao 2, Legnano 20025 - © 2026 Memo Glass Srl. Tutti i diritti riservati';
+        var footers = Array.from(document.querySelectorAll('.company-footer-box'));
+
+        if(!footers.length){
+            var f = document.createElement('div');
+            f.className = 'company-footer-box';
+            document.body.appendChild(f);
+            footers = [f];
+        }
+
+        footers.forEach(function(f, i){
+            if(i === 0){
+                f.innerHTML = correctFooter;
+            } else {
+                f.remove();
+            }
+        });
+    });
+})();
+</script>
+
 </body></html>
